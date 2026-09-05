@@ -1,82 +1,205 @@
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>V4 valve clearance log</title>
 <style>
+  :root{
+    --bg:#101316; --surface:#1a1f24; --surface-2:#171b20;
+    --border:#262b31; --border-soft:#2e343b;
+    --text:#e6e4df; --text-dim:#858d96; --text-faint:#7a828c; --text-faintest:#4a5158;
+    --ok:#5ec27e; --warn:#e8b34a; --bad:#e8705f;
+    --intake:#6ea6c4; --exhaust:#d4915f;
+    --intake-bg:#141b21; --intake-border:#2a3b47; --intake-pos:#7fa0b5;
+    --exhaust-bg:#1e1917; --exhaust-border:#43342c; --exhaust-pos:#b8896a;
+    --ok-border:#2f5c3f; --warn-border:#6b5628; --bad-border:#8a463d;
+    --line:#2e3a44; --line-b:#282e34; --focus:#4d7d94; --press:brightness(1.3);
+    --sheet-overlay:rgba(8,10,12,.82);
+    --note-border:#3a424a;
+    --saved-bg:#22331f; --saved-text:#5ec27e;
+  }
+  :root[data-theme="light"]{
+    --bg:#f6f5f2; --surface:#ffffff; --surface-2:#ffffff;
+    --border:#dcd9d3; --border-soft:#c9c5bd;
+    --text:#1b1e21; --text-dim:#5b6168; --text-faint:#5f656d; --text-faintest:#9a9fa5;
+    --ok:#1f9d52; --warn:#a66a10; --bad:#c1402c;
+    --intake:#2f6f92; --exhaust:#a85f22;
+    --intake-bg:#d6e9f5; --intake-border:#5f9fc2; --intake-pos:#2c5f7a;
+    --exhaust-bg:#f6dcb8; --exhaust-border:#c98a3d; --exhaust-pos:#7a4a12;
+    --ok-border:#bfe3cd; --warn-border:#ecd8a3; --bad-border:#f0c3ba;
+    --line:#d7d2c8; --line-b:#e2ddd3; --focus:#2f6f92; --press:brightness(0.94);
+    --sheet-overlay:rgba(20,18,14,.45);
+    --note-border:#c7ccd1;
+    --saved-bg:#e3f5e9; --saved-text:#1f9d52;
+  }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  body{margin:0;background:#101316;color:#e6e4df;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.5;padding:0 0 90px}
-  header{padding:18px 14px 12px;border-bottom:1px solid #262b31}
-  h1{margin:0;font-size:18px;font-weight:600}
-  .sub{margin:3px 0 0;font-size:12.5px;color:#858d96}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.5;padding:0 0 90px}
+  header{padding:18px 14px 12px;border-bottom:1px solid var(--border)}
+  .headrow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  h1{margin:0;font-size:20px;font-weight:700}
+  .theme-toggle{flex:0 0 auto;width:38px;height:38px;padding:0;border-radius:8px;border:1px solid var(--border-soft);background:var(--surface);color:var(--text);font-size:15px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .theme-toggle:active{filter:var(--press)}
+  .sub{margin:4px 0 0;font-size:13.5px;font-weight:500;color:var(--text-dim)}
+  .kitrow{display:flex;align-items:center;gap:9px;margin-top:11px;flex-wrap:wrap}
+  .kitrow-label{font-size:12.5px;font-weight:600;color:var(--text-dim)}
+  .kit-toggle{display:flex;background:var(--surface);border:1px solid var(--border-soft);border-radius:8px;padding:2px;gap:2px}
+  .kit-tab{border:none;background:transparent;color:var(--text-dim);font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:6px;cursor:pointer}
+  .kit-tab.active{background:var(--text);color:var(--bg)}
+  .kit-tab:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+  .kit-range{font-size:11.5px;font-weight:500;color:var(--text-faint)}
   .tally{display:flex;gap:6px;margin-top:11px}
-  .pill{flex:1;padding:7px 4px;border-radius:6px;background:#1a1f24;text-align:center}
-  .pill b{display:block;font-size:19px;font-weight:600;line-height:1.2;font-family:ui-monospace,Menlo,monospace}
-  .pill span{font-size:10.5px;color:#858d96}
-  .ok b{color:#5ec27e}.warn b{color:#e8b34a}.bad b{color:#e8705f}
+  .pill{flex:1;padding:8px 4px;border-radius:6px;background:var(--surface);text-align:center}
+  .pill b{display:block;font-size:21px;font-weight:700;line-height:1.2;font-family:ui-monospace,Menlo,monospace}
+  .pill span{font-size:11.5px;font-weight:600;color:var(--text-dim)}
+  .ok b{color:var(--ok)}.warn b{color:var(--warn)}.bad b{color:var(--bad)}
 
-  .vlabel{text-align:center;font-size:10px;color:#5a626a;letter-spacing:.1em;padding:9px 0 3px}
-  .orient{display:flex;align-items:center;justify-content:center;gap:9px;padding:12px 14px 4px;font-size:11.5px;font-weight:600;color:#8fa4b5;letter-spacing:.16em}
-  .orient:after,.orient:before{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,#2e3a44)}
-  .orient:after{background:linear-gradient(90deg,#2e3a44,transparent)}
-  .orient .arw{font-size:15px;line-height:1;color:#6ea6c4}
-  .orient-b{display:flex;align-items:center;justify-content:center;gap:9px;padding:5px 14px 13px;font-size:11.5px;font-weight:600;color:#6b757e;letter-spacing:.16em}
-  .orient-b:after,.orient-b:before{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,#282e34)}
-  .orient-b:after{background:linear-gradient(90deg,#282e34,transparent)}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#262b31;border-top:1px solid #262b31;border-bottom:1px solid #262b31}
-  .cyl{background:#101316;padding:11px 9px}
-  .cnum{font-size:12px;color:#858d96;margin-bottom:8px}
-  .cnum b{font-size:15px;color:#c3cad2;font-weight:600}
+  .vlabel{text-align:center;font-size:11px;font-weight:700;color:var(--text-faint);letter-spacing:.1em;padding:9px 0 3px}
+  .orient{display:flex;align-items:center;justify-content:center;gap:9px;padding:12px 14px 4px;font-size:12.5px;font-weight:700;color:var(--intake);letter-spacing:.14em}
+  .orient:after,.orient:before{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--line))}
+  .orient:after{background:linear-gradient(90deg,var(--line),transparent)}
+  .orient .arw{font-size:15px;line-height:1;color:var(--intake)}
+  .orient-b{display:flex;align-items:center;justify-content:center;gap:9px;padding:5px 14px 13px;font-size:12.5px;font-weight:700;color:var(--text-faint)}
+  .orient-b:after,.orient-b:before{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--line-b))}
+  .orient-b:after{background:linear-gradient(90deg,var(--line-b),transparent)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+  .cyl{background:var(--bg);padding:11px 9px}
+  .cnum{font-size:13px;font-weight:500;color:var(--text-dim);margin-bottom:8px}
+  .cnum b{font-size:16px;color:var(--text);font-weight:700}
+  .bank{font-size:11px;font-weight:600;color:var(--text-faint)}
   .prow{display:flex;gap:6px;margin-bottom:5px}
-  .ptag{width:22px;flex-shrink:0;font-size:10px;display:flex;align-items:center;letter-spacing:.05em}
-  .p-i{color:#6ea6c4}.p-e{color:#d4915f}
-  .v{flex:1;min-width:0;border:1px solid #2e343b;border-radius:6px;padding:5px 3px 4px;text-align:center;cursor:pointer}
-  .v:active{filter:brightness(1.35)}
-  .v .pos{font-size:9.5px;letter-spacing:.06em}
-  .v .g{font-size:15px;font-weight:600;font-family:ui-monospace,Menlo,monospace;line-height:1.35;color:#4a5158}
-  .v .d{font-size:9.5px;font-family:ui-monospace,Menlo,monospace;color:#e8b34a;line-height:1.3;min-height:12px}
-  .v.t-i{background:#141b21;border-color:#2a3b47}
-  .v.t-i .pos{color:#5d7c8f}
-  .v.t-e{background:#1e1917;border-color:#43342c}
-  .v.t-e .pos{color:#9a7256}
-  .v.f-ok{border-color:#2f5c3f}.v.f-ok .g{color:#5ec27e}
-  .v.f-warn{border-color:#6b5628}.v.f-warn .g{color:#e8b34a}
-  .v.f-bad{border-color:#8a463d}.v.f-bad .g{color:#e8705f}
+  .ptag{width:24px;flex-shrink:0;font-size:11px;font-weight:700;display:flex;align-items:center;letter-spacing:.05em}
+  .p-i{color:var(--intake)}.p-e{color:var(--exhaust)}
+  .v{flex:1;min-width:0;border:1px solid var(--border-soft);border-radius:6px;padding:6px 3px 5px;text-align:center;cursor:pointer}
+  .v:active{filter:var(--press)}
+  .v:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+  .v .pos{font-size:10.5px;font-weight:700;letter-spacing:.06em}
+  .v .g{font-size:18px;font-weight:700;font-family:ui-monospace,Menlo,monospace;line-height:1.35;color:var(--text-faintest)}
+  .v .d{font-size:11px;font-weight:700;font-family:ui-monospace,Menlo,monospace;color:var(--warn);line-height:1.3;min-height:14px}
+  .v.t-i{background:var(--intake-bg);border-color:var(--intake-border)}
+  .v.t-i .pos{color:var(--intake-pos)}
+  .v.t-e{background:var(--exhaust-bg);border-color:var(--exhaust-border)}
+  .v.t-e .pos{color:var(--exhaust-pos)}
+  .v.f-ok{border-color:var(--ok-border)}.v.f-ok .g{color:var(--ok)}
+  .v.f-warn{border-color:var(--warn-border)}.v.f-warn .g{color:var(--warn)}
+  .v.f-bad{border-color:var(--bad-border)}.v.f-bad .g{color:var(--bad)}
 
-  .ctr{text-align:center;font-size:10px;color:#4a5158;padding:6px 0;letter-spacing:.14em}
-  .key{display:flex;gap:16px;justify-content:center;padding:11px 0 0;font-size:11px;color:#858d96}
+  .ctr{text-align:center;font-size:11px;font-weight:700;color:var(--text-faint);padding:6px 0;letter-spacing:.13em}
+  .key{display:flex;gap:16px;justify-content:center;padding:11px 0 0;font-size:12.5px;font-weight:500;color:var(--text-dim)}
   .key i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px}
-  .k-i{background:#2a3b47;border:1px solid #6ea6c4}
-  .k-e{background:#43342c;border:1px solid #d4915f}
-  .key2{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;padding:7px 14px 0;font-size:11px;color:#858d96}
-  .key2 b{font-weight:600}
-  .c-ok{color:#5ec27e}.c-warn{color:#e8b34a}.c-bad{color:#e8705f}
+  .k-i{background:var(--intake-bg);border:1px solid var(--intake)}
+  .k-e{background:var(--exhaust-bg);border:1px solid var(--exhaust)}
+  .key2{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;padding:7px 14px 0;font-size:12.5px;font-weight:500;color:var(--text-dim)}
+  .key2 b{font-weight:700}
+  .c-ok{color:var(--ok)}.c-warn{color:var(--warn)}.c-bad{color:var(--bad)}
 
-  .sheet{position:fixed;inset:0;background:rgba(8,10,12,.82);display:none;align-items:flex-end;z-index:40}
+  .sheet{position:fixed;inset:0;background:var(--sheet-overlay);display:none;align-items:flex-end;z-index:40}
   .sheet.on{display:flex}
-  .card{width:100%;background:#171b20;border-radius:14px 14px 0 0;padding:18px 16px 26px;border-top:1px solid #2e343b;max-height:92vh;overflow-y:auto}
-  .card h2{margin:0 0 2px;font-size:17px;font-weight:600}
-  .card .spec{margin:0 0 15px;font-size:12.5px;color:#858d96}
+  .card{width:100%;background:var(--surface-2);border-radius:14px 14px 0 0;padding:18px 16px 26px;border-top:1px solid var(--border-soft);max-height:92vh;overflow-y:auto}
+  .card h2{margin:0 0 2px;font-size:19px;font-weight:700;color:var(--text)}
+  .card .spec{margin:0 0 15px;font-size:13.5px;font-weight:500;color:var(--text-dim)}
   .fieldset{margin-bottom:13px}
-  .fieldset label{display:block;font-size:12px;color:#858d96;margin-bottom:5px}
-  input{background:#101316;border:1px solid #2e343b;color:#e6e4df;border-radius:6px;padding:14px 9px;font-size:20px;text-align:center;font-family:ui-monospace,Menlo,monospace;width:100%}
-  input:focus{outline:none;border-color:#4d7d94}
-  .verdict{padding:12px 13px;border-radius:8px;background:#101316;font-size:13.5px;line-height:1.7;margin-bottom:14px;color:#b3bbc4}
-  .verdict b{font-family:ui-monospace,Menlo,monospace;color:#e8b34a}
-  .verdict .good{color:#5ec27e}
-  .verdict .err{color:#e8705f}
-  button{border-radius:7px;border:1px solid #2e343b;background:#1f252b;color:#e6e4df;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;padding:13px 8px}
-  button:active{background:#282f36}
+  .fieldset label{display:block;font-size:13px;font-weight:600;color:var(--text-dim);margin-bottom:5px}
+  input{background:var(--bg);border:1px solid var(--border-soft);color:var(--text);border-radius:6px;padding:14px 9px;font-size:21px;text-align:center;font-family:ui-monospace,Menlo,monospace;width:100%}
+  input:focus{outline:none;border-color:var(--focus)}
+  input:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+  input::placeholder,textarea::placeholder{color:var(--text-faint);opacity:1}
+  .verdict{padding:12px 13px;border-radius:8px;background:var(--surface);font-size:15px;font-weight:500;line-height:1.7;margin-bottom:14px;color:var(--text-dim)}
+  .verdict b{font-family:ui-monospace,Menlo,monospace;color:var(--warn)}
+  .verdict .good{color:var(--ok)}
+  .verdict .err{color:var(--bad)}
+  button{border-radius:7px;border:1px solid var(--border-soft);background:var(--surface);color:var(--text);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;padding:13px 8px}
+  button:active{filter:var(--press)}
+  button:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
   .acts{display:flex;gap:8px}
   .acts button{flex:1}
-  .clr{color:#e8705f;flex:0 0 78px}
-  footer{position:fixed;bottom:0;left:0;right:0;display:flex;gap:8px;padding:10px 14px;background:#101316;border-top:1px solid #262b31}
-  #out{margin:14px;padding:12px;background:#1a1f24;border-radius:8px;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;white-space:pre;overflow-x:auto;display:none;color:#b3bbc4}
-  .note{margin:16px 14px 0;padding:11px 12px;background:#1a1f24;border-left:3px solid #3a424a;font-size:12px;color:#858d96;line-height:1.65}
-  .saved{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#22331f;color:#5ec27e;padding:6px 14px;border-radius:20px;font-size:12px;opacity:0;transition:opacity .25s;pointer-events:none}
+  .clr{color:var(--bad);flex:0 0 78px}
+  footer{position:fixed;bottom:0;left:0;right:0;display:flex;gap:8px;padding:10px 14px;background:var(--bg);border-top:1px solid var(--border)}
+  #out{margin:14px;padding:12px;background:var(--surface);border-radius:8px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;white-space:pre;overflow-x:auto;display:none;color:var(--text-dim)}
+  .note{margin:16px 14px 0;padding:11px 12px;background:var(--surface);border-left:3px solid var(--note-border);font-size:13px;font-weight:500;color:var(--text-dim);line-height:1.65}
+  .tspec-title{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:8px}
+  .tgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:2px}
+  .tbubble{background:var(--bg);border:1px solid var(--border-soft);border-radius:10px;padding:9px 10px;display:flex;flex-direction:column;gap:3px}
+  .tbubble .tb-label{font-size:11.5px;font-weight:600;color:var(--text-dim)}
+  .tbubble b{font-family:ui-monospace,Menlo,monospace;font-size:17px;font-weight:700;color:var(--text)}
+  .tbubble i{font-size:10.5px;font-style:normal;font-weight:500;color:var(--text-faint)}
+  .tspec-src{font-size:11.5px;font-weight:500;color:var(--text-faint);margin-top:10px;padding-top:8px;border-top:1px solid var(--border-soft);line-height:1.55}
+  @media (max-width:340px){.tgrid{grid-template-columns:1fr}}
+  .saved{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--saved-bg);color:var(--saved-text);padding:6px 14px;border-radius:20px;font-size:12.5px;font-weight:600;opacity:0;transition:opacity .25s;pointer-events:none}
   .saved.on{opacity:1}
+
+  details.meta{margin:14px 14px 0;background:var(--surface);border-radius:8px;border:1px solid var(--border-soft)}
+  details.meta summary{list-style:none;cursor:pointer;padding:12px;font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:baseline;gap:7px}
+  details.meta summary::-webkit-details-marker{display:none}
+  details.meta summary:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+  details.meta summary:before{content:'\25b8';font-size:12px;color:var(--text-dim);display:inline-block;transition:transform .15s}
+  details.meta[open] summary:before{transform:rotate(90deg)}
+  .meta-hint{font-weight:500;font-size:12.5px;color:var(--text-dim)}
+  .meta-body{padding:2px 12px 14px}
+  .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .meta-grid .fieldset{margin-bottom:0}
+  .meta-body input{font-size:15px;padding:9px 10px;text-align:left;font-family:inherit}
+  .meta-body textarea{background:var(--bg);border:1px solid var(--border-soft);color:var(--text);border-radius:6px;padding:9px 10px;font-size:14px;font-family:inherit;width:100%;resize:vertical}
+  .meta-body textarea:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+  .fhint{font-size:11.5px;font-weight:600;color:var(--bad);min-height:14px;margin-top:3px}
+  @media (max-width:380px){.meta-grid{grid-template-columns:1fr}}
+
+  #printsheet{display:none}
+  @media print{
+    body>*{display:none!important}
+    #printsheet{display:block!important;padding:24px;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:#111;background:#fff}
+    #printsheet h1{font-size:19px;margin:0 0 4px}
+    #printsheet .psub{font-size:11px;color:#555;margin:0 0 16px}
+    table.pmeta{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:12px}
+    table.pmeta th{text-align:left;color:#555;font-weight:600;padding:4px 10px 4px 0;white-space:nowrap;width:1%}
+    table.pmeta td{padding:4px 20px 4px 0;border-bottom:1px solid #ddd}
+    .pspec{font-size:11.5px;color:#333;margin:0 0 12px}
+    .porient{text-align:center;font-size:11px;font-weight:700;letter-spacing:.14em;color:#333;margin:14px 0 2px}
+    .prowlabel{text-align:center;font-size:9px;color:#777;letter-spacing:.12em;margin-bottom:6px}
+    .pctr{text-align:center;font-size:9px;color:#999;letter-spacing:.1em;margin:8px 0}
+    .pquad{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .pcyl{border:1px solid #999;border-radius:4px;padding:8px 10px}
+    .pcnum{font-size:12px;font-weight:700;margin-bottom:6px}
+    .pbank{font-weight:400;font-size:10px;color:#777;margin-left:4px}
+    .pprow{display:flex;gap:6px;margin-bottom:6px}
+    .pprow:last-child{margin-bottom:0}
+    .pptag{width:20px;flex:0 0 auto;font-size:9px;font-weight:700;color:#555;padding-top:5px}
+    .pv{flex:1;border:1px solid #ccc;border-radius:4px;padding:5px 7px;font-size:10.5px}
+    .pv-pos{font-size:8.5px;letter-spacing:.06em;color:#777;margin-bottom:2px}
+    .pv-line{line-height:1.7}
+    .pv-blank{display:inline-block;width:60px;border-bottom:1px solid #333;height:11px;vertical-align:-2px}
+    .psummary{font-size:12.5px;font-weight:600;margin:16px 0}
+    .pnotes{font-size:11.5px;margin-bottom:28px;white-space:pre-wrap;border-top:1px solid #ddd;padding-top:8px}
+    .psign{display:flex;gap:40px;margin-top:10px}
+    .sigline{font-size:12px;flex:1;border-top:1px solid #333;padding-top:4px}
+    .pfooter{font-size:9px;color:#888;margin-top:26px;border-top:1px solid #ddd;padding-top:8px}
+  }
 </style>
+<script>
+// Applied before first paint to avoid a flash of the wrong theme.
+(function(){
+  try{
+    var t=localStorage.getItem('v4valvelog-theme');
+    if(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches)t='light';
+    if(t==='light')document.documentElement.setAttribute('data-theme','light');
+  }catch(e){}
+})();
+</script>
 
 <header>
-  <h1>Valve clearance log</h1>
+  <div class="headrow">
+    <h1>Valve clearance log</h1>
+    <button id="btn-theme" class="theme-toggle" aria-label="Switch theme" title="Switch theme">
+      <svg id="icon-sun" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      <svg id="icon-moon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
   <p class="sub">Aprilia V4 &middot; intake 0.10&ndash;0.15 &middot; exhaust 0.20&ndash;0.25 mm &middot; cam towers 12 Nm</p>
+  <div class="kitrow">
+    <span class="kitrow-label">Shim kit</span>
+    <div class="kit-toggle" role="tablist" aria-label="Shim kit">
+      <button class="kit-tab" data-kit="oem" role="tab" aria-selected="false">OEM</button>
+      <button class="kit-tab" data-kit="hotcams" role="tab" aria-selected="false">Hot Cams</button>
+    </div>
+    <span class="kit-range" id="kit-range"></span>
+  </div>
   <div class="tally">
     <div class="pill ok"><b id="t-ok">0</b><span>in spec</span></div>
     <div class="pill warn"><b id="t-warn">0</b><span>marginal</span></div>
@@ -84,6 +207,28 @@
     <div class="pill"><b id="t-done">0</b><span>logged</span></div>
   </div>
 </header>
+
+<details class="meta" id="meta">
+  <summary>Service record <span class="meta-hint">— date, mileage, VIN, technician (optional, included in export)</span></summary>
+  <div class="meta-body">
+    <div class="meta-grid">
+      <div class="fieldset"><label>Date performed</label><input id="m-date" type="date" autocomplete="off"></div>
+      <div class="fieldset"><label>Odometer</label><input id="m-odo" autocomplete="off"></div>
+      <div class="fieldset">
+        <label>VIN</label>
+        <input id="m-vin" maxlength="17" autocomplete="off" style="text-transform:uppercase">
+        <div class="fhint" id="m-vin-hint"></div>
+      </div>
+      <div class="fieldset"><label>Model / year</label><input id="m-model" autocomplete="off"></div>
+      <div class="fieldset"><label>Performed by</label><input id="m-tech" autocomplete="off"></div>
+      <div class="fieldset"><label>Location</label><input id="m-loc" autocomplete="off"></div>
+    </div>
+    <div class="fieldset">
+      <label>Notes</label>
+      <textarea id="m-notes" rows="2" autocomplete="off"></textarea>
+    </div>
+  </div>
+</details>
 
 <div class="orient"><span class="arw">&#9650;</span> FRONT OF BIKE</div>
 <div class="vlabel">EXHAUST OUTBOARD</div>
@@ -103,11 +248,22 @@
   <span><b class="c-bad">tight / loose</b> out of spec</span>
 </div>
 
-<div class="note">
-  Read the sheet with the top of the screen pointing at the front wheel. Cylinders 2 and 4 are the front bank, 1 and 3 the rear. Tap a valve and enter the thickest feeler that seated, in mm &mdash; any increment. A shim change is only suggested when a valve is out of spec or marginal; anything mid-spec is left alone. Enter the old shim thickness, measured at its center, to resolve the suggestion to an absolute size. Readings save in this browser on this device &mdash; nothing is uploaded anywhere.
+<div class="note" id="torque-note">
+  <div class="tspec-title">Valve service torque specs</div>
+  <div class="tgrid">
+    <div class="tbubble"><span class="tb-label">Tank front mount</span><b>8 Nm</b></div>
+    <div class="tbubble"><span class="tb-label">Tank rear mount</span><b>7 Nm</b></div>
+    <div class="tbubble"><span class="tb-label">Head/valve cover</span><b>10 Nm</b></div>
+    <div class="tbubble"><span class="tb-label">Spark plugs</span><b>12 Nm</b></div>
+    <div class="tbubble"><span class="tb-label">Coil fixing screws</span><b>8 Nm</b><i>Loctite 243</i></div>
+    <div class="tbubble"><span class="tb-label">Timing inspection cap</span><b>25 Nm</b></div>
+    <div class="tbubble"><span class="tb-label">Cam tower screws</span><b>12 Nm</b></div>
+    <div class="tbubble"><span class="tb-label">Cam timing gear screw</span><b>30 Nm</b><i>Loctite 243 &middot; replace each time</i></div>
+  </div>
+  <div class="tspec-src">Source: 2016 Tuono V4 1100 RR / Factory service manual &mdash; Characteristics: Fuel Tank, Clutch Cover, Valve Cover, Heads, Timing System. Confirm against your own model/year manual before use &mdash; torque specs vary by generation.</div>
 </div>
 
-<div class="note" id="nostore" style="display:none;border-left-color:#8a463d;color:#d19a90">
+<div class="note" id="nostore" style="display:none;border-left-color:var(--bad-border);color:var(--bad)">
   Storage is blocked in this browser, so readings will be lost when the page closes. Export the log before you leave.
 </div>
 
@@ -116,8 +272,34 @@
 
 <footer>
   <button id="btn-export">Export log</button>
+  <button id="btn-print">Print / PDF</button>
   <button id="btn-reset" class="clr">Clear</button>
 </footer>
+
+<div id="printsheet">
+  <h1>Aprilia V4 &mdash; Valve Clearance Service Record</h1>
+  <p class="psub">Intake 0.10&ndash;0.15 mm &middot; Exhaust 0.20&ndash;0.25 mm &middot; Cam tower torque 12 Nm</p>
+  <table class="pmeta">
+    <tr><th>Date performed</th><td id="p-date"></td><th>Odometer</th><td id="p-odo"></td></tr>
+    <tr><th>Model / year</th><td id="p-model"></td><th>VIN</th><td id="p-vin"></td></tr>
+    <tr><th>Performed by</th><td id="p-tech"></td><th>Location</th><td id="p-loc"></td></tr>
+    <tr><th>Shim kit</th><td id="p-kit" colspan="3"></td></tr>
+  </table>
+  <div class="porient">&#9650; FRONT OF BIKE</div>
+  <div class="prowlabel">EXHAUST OUTBOARD</div>
+  <div class="pquad" id="p-top"></div>
+  <div class="pctr">CENTER OF V &mdash; INTAKES FACE IN</div>
+  <div class="pquad" id="p-bot"></div>
+  <div class="prowlabel">EXHAUST OUTBOARD</div>
+  <div class="porient">REAR OF BIKE &#9660;</div>
+  <div class="psummary" id="p-summary"></div>
+  <div class="pnotes"><b>Notes</b><div id="p-notes"></div></div>
+  <div class="psign">
+    <div class="sigline">Technician signature</div>
+    <div class="sigline">Date</div>
+  </div>
+  <p class="pfooter">Owner-recorded service log &mdash; not verified or certified by Aprilia or an authorized dealer. Generated with aprilia-v4-valve-log, a local, offline tool; nothing in this record is uploaded anywhere.</p>
+</div>
 
 <div class="sheet" id="sheet">
   <div class="card">
@@ -130,6 +312,10 @@
     <div class="fieldset">
       <label>Old shim thickness, mm &mdash; optional, cams out</label>
       <input id="sh-shim" inputmode="decimal" placeholder="0.00" autocomplete="off">
+    </div>
+    <div class="fieldset">
+      <label>New shim, mm &mdash; optional, try a size or record what went in</label>
+      <input id="sh-newshim" inputmode="decimal" placeholder="0.00" autocomplete="off">
     </div>
     <div class="verdict" id="sh-verdict">Enter the thickest feeler that seated.</div>
     <div class="acts">
@@ -144,8 +330,33 @@ var SPEC={
   i:{lo:0.10,hi:0.15,n:'Intake'},
   e:{lo:0.20,hi:0.25,n:'Exhaust'}
 };
-var STEP=0.04;          // shim increment
 var MARGIN=0.015;       // distance from the tight limit that counts as marginal
+
+// Real, purchasable shim sizes per kit — suggestions snap to these rather
+// than assuming a uniform step, since actual catalogs aren't uniform (OEM
+// alternates +0.02/+0.03mm) and different kits cover different ranges.
+var SHIM_KITS={
+  oem:{
+    name:'OEM',
+    range:'1.75–3.15 mm · alternating 0.02/0.03mm steps (OEM pad table)',
+    sizes:[1.75,1.77,1.80,1.82,1.85,1.87,1.90,1.92,1.95,1.97,2.00,2.02,2.05,2.07,2.10,2.12,2.15,2.17,2.20,2.22,2.25,2.27,2.30,2.32,2.35,2.37,2.40,2.42,2.45,2.47,2.50,2.52,2.55,2.57,2.60,2.62,2.65,2.67,2.70,2.72,2.75,2.77,2.80,2.82,2.85,2.87,2.90,2.92,2.95,2.97,3.00,3.02,3.05,3.07,3.10,3.12,3.15]
+  },
+  hotcams:{
+    name:'Hot Cams',
+    range:'1.72–2.60 mm · 0.04mm steps (Hot Cams HCSHIM00, 8.90mm)',
+    sizes:[1.72,1.76,1.80,1.84,1.88,1.92,1.96,2.00,2.04,2.08,2.12,2.16,2.20,2.24,2.28,2.32,2.36,2.40,2.44,2.48,2.52,2.56,2.60]
+  }
+};
+var KIT_KEY='v4valvelog-kit';
+var currentKit='oem';
+function nearestSize(list,target){
+  var best=list[0],bd=Math.abs(best-target);
+  for(var i=1;i<list.length;i++){
+    var d=Math.abs(list[i]-target);
+    if(d<bd){bd=d;best=list[i];}
+  }
+  return best;
+}
 var ROWS=[{el:'top',cyl:[2,4],exFirst:true},{el:'bot',cyl:[1,3],exFirst:false}];
 var LEFT=[2,1];         // cylinders in the left column, so medial faces the centerline
 var data={}, cur=null, timer=null;
@@ -157,14 +368,16 @@ function build(){
     var h='';
     r.cyl.forEach(function(c){
       var bank=r.exFirst?'front bank':'rear bank';
-      h+='<div class="cyl"><div class="cnum">Cylinder <b>'+c+'</b> <span style="font-size:10px;color:#5a626a">'+bank+'</span></div>';
+      h+='<div class="cyl"><div class="cnum">Cylinder <b>'+c+'</b> <span class="bank">'+bank+'</span></div>';
       var order=r.exFirst?['e','i']:['i','e'];
       var side=LEFT.indexOf(c)>-1?['l','m']:['m','l'];
       order.forEach(function(t){
         h+='<div class="prow"><div class="ptag p-'+t+'">'+(t==='e'?'EX':'IN')+'</div>';
         side.forEach(function(p){
           var kk=k(c,t,p);
-          h+='<div class="v t-'+t+'" id="v-'+kk+'" data-k="'+kk+'" data-t="'+t+'">'
+          var label='Cylinder '+c+' '+(t==='e'?'exhaust':'intake')+' '+(p==='m'?'medial':'lateral');
+          h+='<div class="v t-'+t+'" id="v-'+kk+'" data-k="'+kk+'" data-t="'+t+'" '
+            +'tabindex="0" role="button" aria-label="'+label+'">'
             +'<div class="pos">'+(p==='m'?'MED':'LAT')+'</div>'
             +'<div class="g" id="g-'+kk+'">&mdash;</div>'
             +'<div class="d" id="d-'+kk+'"></div></div>';
@@ -178,6 +391,11 @@ function build(){
   var vs=document.querySelectorAll('.v');
   for(var i=0;i<vs.length;i++){
     vs[i].addEventListener('click',function(){openValve(this.dataset.k);});
+    vs[i].addEventListener('keydown',function(e){
+      if(e.key==='Enter'||e.key===' '||e.keyCode===13||e.keyCode===32){
+        e.preventDefault();openValve(this.dataset.k);
+      }
+    });
   }
 }
 
@@ -198,19 +416,34 @@ function calc(kk){
     // Target the loose end of spec: it is the side wear moves away from.
     var target=sp.hi;
     var delta=m-target;                       // negative means the shim must get thinner
-    r.steps=Math.round(Math.abs(delta)/STEP);
-    if(r.steps<1)r.steps=1;
-    r.move=r.steps*STEP;
     r.dir=delta<0?'thinner':'thicker';
+    r.move=Math.abs(delta);
     r.signed=delta<0?-r.move:r.move;
     r.target=target;
 
     var s=parseFloat(d.s);
     if(!isNaN(s)&&d.s!==''){
       r.oldshim=s;
-      r.newshim=s+r.signed;
-      r.pred=m-r.signed;                      // gap moves opposite the shim
+      var kit=SHIM_KITS[currentKit];
+      r.kitName=kit.name;
+      var ideal=s+r.signed;                   // theoretical exact size, may not exist
+      r.idealShim=ideal;
+      r.newshim=nearestSize(kit.sizes,ideal);  // nearest size actually in the kit
+      r.newshimIsIdeal=Math.abs(r.newshim-ideal)<0.001;
+      r.pred=m-(r.newshim-s);                 // gap moves opposite the shim
       r.predOut=(r.pred<sp.lo||r.pred>sp.hi);
+
+      // A candidate/installed shim, if entered, overrides the suggestion for
+      // the predicted gap — this is what's actually going in, which may not
+      // match the theoretical ideal (real shims come in fixed sizes).
+      var ns=parseFloat(d.ns);
+      if(!isNaN(ns)&&d.ns!==''){
+        r.ns=ns;
+        r.nsPred=m-(ns-s);
+        r.nsPredOut=(r.nsPred<sp.lo||r.nsPred>sp.hi);
+        var nsNearest=nearestSize(kit.sizes,ns);
+        if(Math.abs(nsNearest-ns)>0.001){r.nsOffCatalog=true;r.nsNearest=nsNearest;}
+      }
     }
   }
   return r;
@@ -222,12 +455,38 @@ function paint(kk){
       dd=document.getElementById('d-'+kk),
       base='v t-'+el.dataset.t,
       r=calc(kk);
-  if(!r){el.className=base;g.innerHTML='&mdash;';dd.textContent='';return;}
+  if(!r){el.className=base;g.innerHTML='&mdash;';dd.textContent='';dd.style.color='';return;}
   el.className=base+' f-'+r.cls;
   g.textContent=r.m.toFixed(3);
+  dd.style.color='';
   if(!r.act)dd.textContent='';
-  else if(r.newshim!==undefined)dd.textContent='\u2192 '+r.newshim.toFixed(2);
-  else dd.textContent=(r.signed<0?'\u2212':'+')+r.move.toFixed(2);
+  else if(r.ns!==undefined){
+    dd.textContent='→ '+r.ns.toFixed(2);
+    if(r.nsPredOut)dd.style.color='var(--bad)';
+  }
+  else if(r.newshim!==undefined)dd.textContent='≈ '+r.newshim.toFixed(2);
+  else dd.textContent=(r.signed<0?'−':'+')+r.move.toFixed(2);
+}
+
+function rowsData(){
+  var out=[];
+  [2,4,1,3].forEach(function(c){
+    ['e','i'].forEach(function(t){
+      ['m','l'].forEach(function(p){
+        var kk=k(c,t,p),d=data[kk]||{},r=calc(kk);
+        out.push({
+          cyl:c,
+          label:(t==='e'?'EX':'IN')+' '+(p==='m'?'MED':'LAT'),
+          labelLong:(t==='e'?'Exhaust':'Intake')+' '+(p==='m'?'Medial':'Lateral'),
+          gap:d.m?parseFloat(d.m).toFixed(3):null,
+          shim:(d.s&&d.s!=='')?parseFloat(d.s).toFixed(2):null,
+          newshim:(d.ns&&d.ns!=='')?parseFloat(d.ns).toFixed(2):null,
+          r:r
+        });
+      });
+    });
+  });
+  return out;
 }
 
 function tally(){
@@ -242,42 +501,60 @@ function tally(){
   document.getElementById('t-done').textContent=n+'/16';
 }
 
+var lastFocused=null;
 function openValve(kk){
   cur=kk;
+  lastFocused=document.activeElement;
   var c=kk.charAt(1),t=kk.charAt(2),p=kk.charAt(3),sp=SPEC[t],d=data[kk]||{};
   document.getElementById('sh-title').textContent=
-    'Cylinder '+c+' \u00b7 '+sp.n+' \u00b7 '+(p==='m'?'Medial':'Lateral');
+    'Cylinder '+c+' · '+sp.n+' · '+(p==='m'?'Medial':'Lateral');
   document.getElementById('sh-spec').textContent=
-    'Spec '+sp.lo.toFixed(2)+'\u2013'+sp.hi.toFixed(2)+' mm';
+    'Spec '+sp.lo.toFixed(2)+'–'+sp.hi.toFixed(2)+' mm';
   document.getElementById('sh-gap').value=d.m||'';
   document.getElementById('sh-shim').value=d.s||'';
+  document.getElementById('sh-newshim').value=d.ns||'';
   verdict();
   document.getElementById('sheet').className='sheet on';
+  document.getElementById('sh-gap').focus();
+}
+function closeSheet(){
+  document.getElementById('sheet').className='sheet';
+  if(lastFocused&&lastFocused.focus)lastFocused.focus();
 }
 
 function verdict(){
   var v=document.getElementById('sh-verdict'),r=calc(cur);
-  if(!r){v.textContent='Enter the thickest feeler that seated.';return;}
-  var h='Gap <b>'+r.m.toFixed(3)+'</b> \u2014 ';
+  if(!r){v.textContent='Enter the thickest feeler that seated.';document.getElementById('sh-newshim').placeholder='0.00';return;}
+  var h='Gap <b>'+r.m.toFixed(3)+'</b> — ';
   if(r.cls==='ok')h+='<span class="good">in spec</span>';
-  else if(r.cls==='warn')h+='<span style="color:#e8b34a">in spec, within '+MARGIN.toFixed(3)+' of the tight limit</span>';
+  else if(r.cls==='warn')h+='<span style="color:var(--warn)">in spec, within '+MARGIN.toFixed(3)+' of the tight limit</span>';
   else h+='<span class="err">out of spec, '+r.word+'</span>';
 
   if(!r.act){
     h+='<br>No shim change needed.';
   }else{
-    h+='<br>Go <b>'+r.move.toFixed(2)+' mm '+r.dir+'</b> \u2014 '
-      +r.steps+' step'+(r.steps>1?'s':'')+' of '+STEP.toFixed(2)
-      +', targeting '+r.target.toFixed(2);
+    h+='<br>Needs roughly <b>'+r.move.toFixed(2)+' mm '+r.dir+'</b>, targeting '+r.target.toFixed(2)+' mm gap.';
     if(r.newshim!==undefined){
-      h+='<br>Fit <b>'+r.newshim.toFixed(2)+' mm</b> in place of '+r.oldshim.toFixed(2)
-        +' \u2192 predicted gap '+r.pred.toFixed(3);
-      if(r.predOut)h+=' <span class="err">(lands out of spec \u2014 try one step the other way)</span>';
+      h+='<br>Nearest '+r.kitName+' size: <b>'+r.newshim.toFixed(2)+' mm</b>'
+        +(r.newshimIsIdeal?'':' <span style="color:var(--text-faint)">(ideal calc '+r.idealShim.toFixed(2)+')</span>')
+        +' in place of '+r.oldshim.toFixed(2)+' → predicted gap '+r.pred.toFixed(3);
+      if(r.predOut)h+=' <span class="err">(closest size in this kit still lands out of spec)</span>';
     }else{
       h+='<br>Enter the old shim thickness for an absolute size.';
     }
+    if(r.ns!==undefined){
+      if(r.nsPred!==undefined){
+        h+='<br>With <b>'+r.ns.toFixed(2)+' mm</b> installed → predicted gap '+r.nsPred.toFixed(3)
+          +(r.nsPredOut?' <span class="err">(out of spec)</span>':' <span class="good">(in spec)</span>');
+        if(r.nsOffCatalog)h+='<br><span style="color:var(--text-faint)">Not a stock '+r.kitName+' size — nearest is '+r.nsNearest.toFixed(2)+' mm.</span>';
+      }else{
+        h+='<br>New shim recorded: <b>'+r.ns.toFixed(2)+' mm</b> — enter the old shim too for a predicted gap.';
+      }
+    }
   }
   v.innerHTML=h;
+  var nsInput=document.getElementById('sh-newshim');
+  nsInput.placeholder=(r.act&&r.newshim!==undefined)?('e.g. '+r.newshim.toFixed(2)):'0.00';
 }
 
 document.getElementById('sh-gap').addEventListener('input',function(){
@@ -288,15 +565,20 @@ document.getElementById('sh-shim').addEventListener('input',function(){
   data[cur]=data[cur]||{};data[cur].s=this.value;
   verdict();paint(cur);save();
 });
-document.getElementById('sh-done').addEventListener('click',function(){
-  document.getElementById('sheet').className='sheet';
+document.getElementById('sh-newshim').addEventListener('input',function(){
+  data[cur]=data[cur]||{};data[cur].ns=this.value;
+  verdict();paint(cur);save();
 });
+document.getElementById('sh-done').addEventListener('click',closeSheet);
 document.getElementById('sh-clear').addEventListener('click',function(){
   delete data[cur];paint(cur);tally();save();
-  document.getElementById('sheet').className='sheet';
+  closeSheet();
 });
 document.getElementById('sheet').addEventListener('click',function(e){
-  if(e.target===this)this.className='sheet';
+  if(e.target===this)closeSheet();
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&document.getElementById('sheet').className.indexOf('on')>-1)closeSheet();
 });
 
 var KEY='v4valvelog';
@@ -327,34 +609,113 @@ function load(){
   }catch(e){}
 }
 
+function fmtDate(v){
+  if(!v)return '—';
+  var parts=v.split('-');
+  if(parts.length!==3)return v;
+  return parts[1]+'/'+parts[2]+'/'+parts[0];
+}
+function mv(id){var v=document.getElementById(id).value;return v?v:'—';}
+
 document.getElementById('btn-export').addEventListener('click',function(){
   var o=document.getElementById('out');
   if(o.style.display==='block'){o.style.display='none';return;}
-  var L=['APRILIA V4 \u2014 VALVE CLEARANCE LOG',new Date().toDateString(),'',
-         'Intake 0.10-0.15 mm   Exhaust 0.20-0.25 mm',''];
-  [2,4,1,3].forEach(function(c){
-    L.push('CYLINDER '+c);
-    ['e','i'].forEach(function(t){
-      ['m','l'].forEach(function(p){
-        var kk=k(c,t,p),d=data[kk]||{},r=calc(kk);
-        var g=d.m?parseFloat(d.m).toFixed(3):'  -  ';
-        var s=(d.s&&d.s!=='')?parseFloat(d.s).toFixed(2):' -  ';
-        var note='';
-        if(r){
-          note='   '+r.word;
-          if(r.act){
-            note+=', '+(r.signed<0?'-':'+')+r.move.toFixed(2);
-            if(r.newshim!==undefined)note+=' -> '+r.newshim.toFixed(2);
-          }
-        }
-        L.push('  '+(t==='e'?'EX':'IN')+' '+(p==='m'?'MED':'LAT')
-              +'   gap '+g+'   shim '+s+note);
-      });
-    });
-    L.push('');
+  var bar='='.repeat(43);
+  var L=[bar,'APRILIA V4 — VALVE CLEARANCE SERVICE RECORD',bar,'',
+    'Date performed:   '+fmtDate(document.getElementById('m-date').value),
+    'Model / year:     '+mv('m-model'),
+    'VIN:              '+mv('m-vin').toUpperCase(),
+    'Odometer:         '+mv('m-odo'),
+    'Performed by:     '+mv('m-tech'),
+    'Location:         '+mv('m-loc'),
+    'Shim kit:         '+SHIM_KITS[currentKit].name+' ('+SHIM_KITS[currentKit].range+')','',
+    'Spec: Intake 0.10-0.15 mm  ·  Exhaust 0.20-0.25 mm  ·  Cam tower torque 12 Nm',
+    '-'.repeat(43)];
+  var curCyl=null;
+  rowsData().forEach(function(row){
+    if(row.cyl!==curCyl){
+      if(curCyl!==null)L.push('');
+      curCyl=row.cyl;
+      L.push('CYLINDER '+row.cyl);
+    }
+    var g=row.gap||'  -  ',sOut=row.shim||' -  ',sIn=row.newshim||' -  ',note='';
+    if(row.r){
+      note='   '+row.r.word;
+      if(row.r.act&&!row.newshim&&row.r.newshim!==undefined){
+        note+=' (suggested '+row.r.newshim.toFixed(2)+')';
+      }
+    }
+    L.push('  '+row.label+'   gap '+g+'   old shim '+sOut+'   new shim '+sIn+note);
   });
+  L.push('-'.repeat(43));
+  var o2=0,w2=0,b2=0,n2=0;
+  for(var kk in data){var r=calc(kk);if(!r)continue;n2++;if(r.cls==='bad')b2++;else if(r.cls==='warn')w2++;else o2++;}
+  L.push(n2+'/16 valves logged — '+o2+' in spec, '+w2+' marginal, '+b2+' out of spec.','');
+  var notes=document.getElementById('m-notes').value;
+  if(notes){L.push('Notes:');notes.split('\n').forEach(function(line){L.push('  '+line);});L.push('');}
+  L.push(bar,
+    'Owner-recorded service log — not verified or certified by Aprilia',
+    'or an authorized dealer. Generated '+new Date().toDateString()+' with',
+    'aprilia-v4-valve-log, a local, offline tool; nothing in this record',
+    'is uploaded anywhere.',
+    bar);
   o.textContent=L.join('\n');
   o.style.display='block';
+});
+
+function pline(label,val,unit){
+  return val
+    ? label+' <b>'+val+'</b> '+unit
+    : label+' <span class="pv-blank"></span> '+unit;
+}
+
+function buildPrintGrid(){
+  ROWS.forEach(function(r){
+    var h='';
+    r.cyl.forEach(function(c){
+      var bank=r.exFirst?'front bank':'rear bank';
+      h+='<div class="pcyl"><div class="pcnum">Cylinder '+c+'<span class="pbank">'+bank+'</span></div>';
+      var order=r.exFirst?['e','i']:['i','e'];
+      var side=LEFT.indexOf(c)>-1?['l','m']:['m','l'];
+      order.forEach(function(t){
+        h+='<div class="pprow"><div class="pptag">'+(t==='e'?'EX':'IN')+'</div>';
+        side.forEach(function(p){
+          var kk=k(c,t,p),d=data[kk]||{};
+          var g=d.m?parseFloat(d.m).toFixed(3):null;
+          var s=(d.s&&d.s!=='')?parseFloat(d.s).toFixed(2):null;
+          var ns=(d.ns&&d.ns!=='')?parseFloat(d.ns).toFixed(2):null;
+          h+='<div class="pv"><div class="pv-pos">'+(p==='m'?'MED':'LAT')+'</div>'
+            +'<div class="pv-line">'+pline('Gap',g,'mm')+'</div>'
+            +'<div class="pv-line">'+pline('Old shim',s,'mm')+'</div>'
+            +'<div class="pv-line">'+pline('New shim',ns,'mm')+'</div></div>';
+        });
+        h+='</div>';
+      });
+      h+='</div>';
+    });
+    document.getElementById('p-'+r.el).innerHTML=h;
+  });
+}
+
+function fillPrintSheet(){
+  document.getElementById('p-date').textContent=fmtDate(document.getElementById('m-date').value);
+  document.getElementById('p-odo').textContent=mv('m-odo');
+  document.getElementById('p-model').textContent=mv('m-model');
+  document.getElementById('p-vin').textContent=mv('m-vin').toUpperCase();
+  document.getElementById('p-tech').textContent=mv('m-tech');
+  document.getElementById('p-loc').textContent=mv('m-loc');
+  document.getElementById('p-kit').textContent=SHIM_KITS[currentKit].name+' ('+SHIM_KITS[currentKit].range+')';
+
+  buildPrintGrid();
+
+  var o=0,w=0,b=0,n=0;
+  for(var kk in data){var r=calc(kk);if(!r)continue;n++;if(r.cls==='bad')b++;else if(r.cls==='warn')w++;else o++;}
+  document.getElementById('p-summary').textContent=n+'/16 valves logged — '+o+' in spec, '+w+' marginal, '+b+' out of spec.';
+  document.getElementById('p-notes').textContent=document.getElementById('m-notes').value||'—';
+}
+document.getElementById('btn-print').addEventListener('click',function(){
+  fillPrintSheet();
+  window.print();
 });
 
 document.getElementById('btn-reset').addEventListener('click',function(){
@@ -364,6 +725,80 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   var vs=document.querySelectorAll('.v');
   for(var i=0;i<vs.length;i++)paint(vs[i].dataset.k);
   tally();
+});
+
+var THEME_KEY='v4valvelog-theme';
+function paintThemeBtn(){
+  var isLight=document.documentElement.getAttribute('data-theme')==='light';
+  document.getElementById('icon-sun').style.display=isLight?'none':'block';
+  document.getElementById('icon-moon').style.display=isLight?'block':'none';
+  document.getElementById('btn-theme').setAttribute('aria-label','Switch to '+(isLight?'dark':'light')+' theme');
+}
+document.getElementById('btn-theme').addEventListener('click',function(){
+  var next=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';
+  if(next==='light')document.documentElement.setAttribute('data-theme','light');
+  else document.documentElement.removeAttribute('data-theme');
+  try{localStorage.setItem(THEME_KEY,next);}catch(e){}
+  paintThemeBtn();
+});
+paintThemeBtn();
+
+function paintKitTabs(){
+  document.querySelectorAll('.kit-tab').forEach(function(b){
+    var on=b.dataset.kit===currentKit;
+    b.classList.toggle('active',on);
+    b.setAttribute('aria-selected',on?'true':'false');
+  });
+  document.getElementById('kit-range').textContent=SHIM_KITS[currentKit].range;
+}
+function setKit(kk){
+  if(!SHIM_KITS[kk])return;
+  currentKit=kk;
+  try{localStorage.setItem(KIT_KEY,kk);}catch(e){}
+  paintKitTabs();
+  var vs=document.querySelectorAll('.v');
+  for(var i=0;i<vs.length;i++)paint(vs[i].dataset.k);
+  if(cur)verdict();
+}
+document.querySelectorAll('.kit-tab').forEach(function(b){
+  b.addEventListener('click',function(){setKit(this.dataset.kit);});
+});
+(function(){
+  try{
+    var saved=localStorage.getItem(KIT_KEY);
+    if(saved&&SHIM_KITS[saved])currentKit=saved;
+  }catch(e){}
+})();
+paintKitTabs();
+
+var META_KEY='v4valvelog-meta';
+var META_FIELDS=['m-date','m-odo','m-vin','m-model','m-tech','m-loc','m-notes'];
+function saveMeta(){
+  try{
+    var m={};
+    META_FIELDS.forEach(function(id){m[id]=document.getElementById(id).value;});
+    localStorage.setItem(META_KEY,JSON.stringify(m));
+  }catch(e){}
+}
+function loadMeta(){
+  try{
+    var raw=localStorage.getItem(META_KEY);
+    if(!raw)return;
+    var m=JSON.parse(raw);
+    META_FIELDS.forEach(function(id){if(m[id])document.getElementById(id).value=m[id];});
+  }catch(e){}
+}
+loadMeta();
+if(!document.getElementById('m-date').value){
+  document.getElementById('m-date').value=new Date().toISOString().slice(0,10);
+  saveMeta();
+}
+META_FIELDS.forEach(function(id){
+  document.getElementById(id).addEventListener('input',saveMeta);
+});
+document.getElementById('m-vin').addEventListener('input',function(){
+  var n=this.value.length,hint=document.getElementById('m-vin-hint');
+  hint.textContent=(n>0&&n!==17)?'VINs are normally 17 characters — double-check.':'';
 });
 
 build();load();tally();
