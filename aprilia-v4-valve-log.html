@@ -509,13 +509,37 @@ function build(){
 
 // Pure spec classification — no kit/shim math, reused for live tiles and
 // for reading back completed history entries.
+// All spec comparisons run in whole microns. Decimal mm values like 0.15
+// aren't exact in floating point, so a gap sitting exactly on a limit could
+// otherwise compare as a hair past it and be flagged out of spec.
+function U(mm){return Math.round(mm*1000);}
+
 function classifyGap(m,type){
   var sp=SPEC[type];
   if(isNaN(m))return null;
-  if(m<sp.lo)return{cls:'bad',word:'tight',sp:sp};
-  if(m>sp.hi)return{cls:'bad',word:'loose',sp:sp};
-  if(m<=sp.lo+MARGIN)return{cls:'warn',word:'low',sp:sp};
+  var mu=U(m);
+  if(mu<U(sp.lo))return{cls:'bad',word:'tight',sp:sp};
+  if(mu>U(sp.hi))return{cls:'bad',word:'loose',sp:sp};
+  if(mu<=U(sp.lo)+U(MARGIN))return{cls:'warn',word:'low',sp:sp};
   return{cls:'ok',word:'ok',sp:sp};
+}
+
+// Picks the kit shim that leaves the loosest gap still inside spec (the
+// loose end is the side wear moves away from). If no size in the kit can
+// reach spec, returns the size that gets closest.
+function pickShim(sizes,gap,oldShim,sp){
+  var gU=U(gap),sU=U(oldShim),lo=U(sp.lo),hi=U(sp.hi);
+  var best=null,bestP=0,bestD=0;
+  sizes.forEach(function(x){
+    var p=gU+sU-U(x);
+    if(p>=lo&&p<=hi&&(best===null||p>bestP)){best=x;bestP=p;}
+  });
+  if(best!==null)return{size:best,predU:bestP};
+  sizes.forEach(function(x){
+    var p=gU+sU-U(x),d=p<lo?lo-p:p-hi;
+    if(best===null||d<bestD){best=x;bestP=p;bestD=d;}
+  });
+  return{size:best,predU:bestP};
 }
 
 function calc(kk){
@@ -543,10 +567,11 @@ function calc(kk){
       r.kitName=kit.name;
       var ideal=s+r.signed;                   // theoretical exact size, may not exist
       r.idealShim=ideal;
-      r.newshim=nearestSize(kit.sizes,ideal);  // nearest size actually in the kit
-      r.newshimIsIdeal=Math.abs(r.newshim-ideal)<0.001;
-      r.pred=m-(r.newshim-s);                 // gap moves opposite the shim
-      r.predOut=(r.pred<sp.lo||r.pred>sp.hi);
+      var pick=pickShim(kit.sizes,m,s,sp);    // best size actually in the kit
+      r.newshim=pick.size;
+      r.newshimIsIdeal=U(r.newshim)===U(ideal);
+      r.pred=pick.predU/1000;                 // gap moves opposite the shim
+      r.predOut=(pick.predU<U(sp.lo)||pick.predU>U(sp.hi));
 
       // A candidate/installed shim, if entered, overrides the suggestion for
       // the predicted gap — this is what's actually going in, which may not
@@ -554,10 +579,11 @@ function calc(kk){
       var ns=parseFloat(d.ns);
       if(!isNaN(ns)&&d.ns!==''){
         r.ns=ns;
-        r.nsPred=m-(ns-s);
-        r.nsPredOut=(r.nsPred<sp.lo||r.nsPred>sp.hi);
+        var nsPredU=U(m)+U(s)-U(ns);
+        r.nsPred=nsPredU/1000;
+        r.nsPredOut=(nsPredU<U(sp.lo)||nsPredU>U(sp.hi));
         var nsNearest=nearestSize(kit.sizes,ns);
-        if(Math.abs(nsNearest-ns)>0.001){r.nsOffCatalog=true;r.nsNearest=nsNearest;}
+        if(U(nsNearest)!==U(ns)){r.nsOffCatalog=true;r.nsNearest=nsNearest;}
       }
     }
   }
@@ -664,10 +690,10 @@ function verdict(){
   }else{
     h+='<br>Needs roughly <b>'+r.move.toFixed(2)+' mm '+r.dir+'</b>, targeting '+r.target.toFixed(2)+' mm gap.';
     if(r.newshim!==undefined){
-      h+='<br>Nearest '+r.kitName+' size: <b>'+r.newshim.toFixed(2)+' mm</b>'
+      h+='<br>Best '+r.kitName+' size: <b>'+r.newshim.toFixed(2)+' mm</b>'
         +(r.newshimIsIdeal?'':' <span style="color:var(--text-faint)">(ideal calc '+r.idealShim.toFixed(2)+')</span>')
         +' in place of '+r.oldshim.toFixed(2)+' → predicted gap '+r.pred.toFixed(3);
-      if(r.predOut)h+=' <span class="err">(closest size in this kit still lands out of spec)</span>';
+      if(r.predOut)h+=' <span class="err">(no size in this kit reaches spec)</span>';
     }else{
       h+='<br>Enter the old shim thickness for an absolute size.';
     }
