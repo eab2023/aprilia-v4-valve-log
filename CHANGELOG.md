@@ -1,5 +1,21 @@
 # Changelog
 
+## v3.0 (2026-09-17)
+
+Got more than one bike? Each one now keeps its own readings, shim kit, service details, and history. Add a bike with the + button and switch between them with the dropdown. If you used v2, your existing log carries over on its own.
+
+When you finish a job, tap "Save current & start new" under Service history. The finished service is kept with its date and mileage, so next time you can look back and see which valves have been moving.
+
+Give a bike a check interval and the app will show roughly when the next check is due, based on your odometer.
+
+There's a tools list now, behind the wrench icon at the top. It separates what you need for a quick clearance check from what you need to pull the cams and swap shims, with a checkbox for each item. OEM part numbers come from the service manual. Anything marked "guide" comes from Fostytou's valve write-up on ApriliaForum, including the homemade tool options. Thanks to him and Amauri for doing the legwork on that.
+
+Smaller things:
+- Specs show inches next to millimeters, and torques show lb·ft next to Nm.
+- Export can copy straight to your clipboard or switch to CSV for a spreadsheet.
+- Type something that looks off, like 2.5 when you meant 0.25, and you'll get a heads-up.
+- Cleaner layout. The valve diagram sits right under the tally, and torque specs fold away until you need them.
+
 ## v2.0 — 2026-09-05
 
 ### New shim tracking — knows what came out AND what went in

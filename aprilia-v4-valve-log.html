@@ -31,43 +31,80 @@
     --saved-bg:#e3f5e9; --saved-text:#1f9d52;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  body{margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.5;padding:0 0 90px}
-  header{padding:18px 14px 12px;border-bottom:1px solid var(--border)}
+  [hidden]{display:none!important}
+  body{margin:0 auto;max-width:680px;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.5;padding:0 0 96px}
+  header{position:sticky;top:0;z-index:30;background:var(--bg);padding:10px 14px;border-bottom:1px solid var(--border)}
   .headrow{display:flex;align-items:center;justify-content:space-between;gap:10px}
-  h1{margin:0;font-size:20px;font-weight:700}
-  .theme-toggle{flex:0 0 auto;width:38px;height:38px;padding:0;border-radius:8px;border:1px solid var(--border-soft);background:var(--surface);color:var(--text);font-size:15px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  h1{margin:0;font-size:18px;font-weight:700;letter-spacing:-.01em}
+  .theme-toggle{flex:0 0 auto;width:38px;height:38px;padding:0;border-radius:10px;border:none;background:transparent;color:var(--text-dim);display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .theme-toggle:hover{background:var(--surface);color:var(--text)}
   .theme-toggle:active{filter:var(--press)}
-  .sub{margin:4px 0 0;font-size:13.5px;font-weight:500;color:var(--text-dim)}
-  .kitrow{display:flex;align-items:center;gap:9px;margin-top:11px;flex-wrap:wrap}
-  .kitrow-label{font-size:12.5px;font-weight:600;color:var(--text-dim)}
-  .kit-toggle{display:flex;background:var(--surface);border:1px solid var(--border-soft);border-radius:8px;padding:2px;gap:2px}
-  .kit-tab{border:none;background:transparent;color:var(--text-dim);font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:6px;cursor:pointer}
-  .kit-tab.active{background:var(--text);color:var(--bg)}
-  .kit-tab:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+  .headbtns{display:flex;gap:4px}
+  .ctx{padding:14px 14px 0}
+
+  .drawer{position:fixed;inset:0;background:var(--sheet-overlay);display:none;justify-content:flex-end;z-index:45}
+  .drawer.on{display:flex}
+  .drawer-panel{width:min(380px,90vw);height:100%;background:var(--surface-2);border-left:1px solid var(--border-soft);padding:16px 14px 24px;overflow-y:auto}
+  .drawer-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px}
+  .drawer-head h2{margin:0;font-size:19px;font-weight:700}
+  #tools-count{font-size:13px;font-weight:600;color:var(--text-faint);margin-left:4px}
+  .drawer-close{padding:8px 14px;font-size:14px}
+  .drawer-reset{width:100%;margin-top:14px;padding:10px 8px;font-size:14px}
+  .tgroup{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin:16px 0 4px}
+  .titem{display:flex;gap:11px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border-soft);cursor:pointer}
+  .titem input[type=checkbox]{width:20px;height:20px;flex:0 0 auto;margin:1px 0 0;padding:0;accent-color:var(--ok);cursor:pointer}
+  .titem .tname{display:block;font-size:14.5px;font-weight:600;color:var(--text)}
+  .titem .tmeta{display:block;font-size:12px;font-weight:500;color:var(--text-faint)}
+  .titem .tpn{font-family:ui-monospace,Menlo,monospace;font-weight:700}
+  .titem .talt{display:block;font-size:12px;font-weight:600;color:var(--text-dim);margin-top:2px}
+  .titem.done .tname{color:var(--text-faint);text-decoration:line-through}
+
+  .bikerow{display:flex;align-items:center;gap:8px}
+  .bikerow select{flex:1;min-width:0;height:40px;background:var(--surface);border:1px solid var(--border-soft);color:var(--text);font-size:15px;font-weight:600;padding:0 10px;border-radius:10px;font-family:inherit}
+  .iconbtn{flex:0 0 auto;width:40px;height:40px;padding:0;border-radius:10px;border:1px solid var(--border-soft);background:var(--surface);color:var(--text-dim);font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .iconbtn:focus-visible,.bikerow select:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+  .pform{margin-top:10px;padding:12px;background:var(--surface);border:1px solid var(--border-soft);border-radius:12px}
+  .pform-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+  .pform-grid .fieldset{margin-bottom:0}
+  .pform input{font-size:15px;padding:9px 10px;text-align:left;font-family:inherit}
+  @media (max-width:380px){.pform-grid{grid-template-columns:1fr}}
+  .duerow{margin-top:10px;font-size:12.5px;font-weight:600;color:var(--text-dim)}
+
+  .kitrow{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .kitrow-label{font-size:13px;font-weight:600;color:var(--text-dim)}
+  .kit-toggle{display:flex;background:var(--surface);border:1px solid var(--border-soft);border-radius:10px;padding:3px;gap:2px}
+  .kit-tab,.mode-tab{border:none;background:transparent;color:var(--text-dim);font-size:13px;font-weight:600;padding:6px 14px;border-radius:7px;cursor:pointer}
+  .kit-tab.active,.mode-tab.active{background:var(--text);color:var(--bg)}
+  .kit-tab:focus-visible,.mode-tab:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+  .tmode{display:inline-flex;margin:8px 0 2px}
+  .tsrc{font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--warn);border:1px solid var(--warn-border);border-radius:4px;padding:0 4px;margin-left:6px;vertical-align:2px}
   .kit-range{font-size:11.5px;font-weight:500;color:var(--text-faint)}
-  .tally{display:flex;gap:6px;margin-top:11px}
-  .pill{flex:1;padding:8px 4px;border-radius:6px;background:var(--surface);text-align:center}
-  .pill b{display:block;font-size:21px;font-weight:700;line-height:1.2;font-family:ui-monospace,Menlo,monospace}
+  .tally{display:flex;margin-top:12px;background:var(--surface);border:1px solid var(--border-soft);border-radius:12px}
+  .pill{flex:1;padding:10px 4px;text-align:center}
+  .pill+.pill{border-left:1px solid var(--border-soft)}
+  .pill b{display:block;font-size:22px;font-weight:700;line-height:1.2;font-family:ui-monospace,Menlo,monospace}
   .pill span{font-size:11.5px;font-weight:600;color:var(--text-dim)}
   .ok b{color:var(--ok)}.warn b{color:var(--warn)}.bad b{color:var(--bad)}
 
-  .vlabel{text-align:center;font-size:11px;font-weight:700;color:var(--text-faint);letter-spacing:.1em;padding:9px 0 3px}
-  .orient{display:flex;align-items:center;justify-content:center;gap:9px;padding:12px 14px 4px;font-size:12.5px;font-weight:700;color:var(--intake);letter-spacing:.14em}
+  .diagram{margin:14px 14px 0;background:var(--surface);border:1px solid var(--border-soft);border-radius:14px;overflow:hidden;padding-bottom:12px}
+  .vlabel{text-align:center;font-size:10.5px;font-weight:700;color:var(--text-faint);letter-spacing:.12em;padding:6px 0 6px}
+  .orient{display:flex;align-items:center;justify-content:center;gap:9px;padding:12px 14px 2px;font-size:12px;font-weight:700;color:var(--intake);letter-spacing:.14em}
   .orient:after,.orient:before{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--line))}
   .orient:after{background:linear-gradient(90deg,var(--line),transparent)}
   .orient .arw{font-size:15px;line-height:1;color:var(--intake)}
-  .orient-b{display:flex;align-items:center;justify-content:center;gap:9px;padding:5px 14px 13px;font-size:12.5px;font-weight:700;color:var(--text-faint)}
+  .orient-b{display:flex;align-items:center;justify-content:center;gap:9px;padding:2px 14px 8px;font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--text-faint)}
   .orient-b:after,.orient-b:before{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--line-b))}
   .orient-b:after{background:linear-gradient(90deg,var(--line-b),transparent)}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-  .cyl{background:var(--bg);padding:11px 9px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border-soft);border-top:1px solid var(--border-soft);border-bottom:1px solid var(--border-soft)}
+  .cyl{background:var(--surface);padding:12px 10px}
   .cnum{font-size:13px;font-weight:500;color:var(--text-dim);margin-bottom:8px}
   .cnum b{font-size:16px;color:var(--text);font-weight:700}
   .bank{font-size:11px;font-weight:600;color:var(--text-faint)}
-  .prow{display:flex;gap:6px;margin-bottom:5px}
+  .prow{display:flex;gap:6px;margin-bottom:6px}
+  .prow:last-child{margin-bottom:0}
   .ptag{width:24px;flex-shrink:0;font-size:11px;font-weight:700;display:flex;align-items:center;letter-spacing:.05em}
   .p-i{color:var(--intake)}.p-e{color:var(--exhaust)}
-  .v{flex:1;min-width:0;border:1px solid var(--border-soft);border-radius:6px;padding:6px 3px 5px;text-align:center;cursor:pointer}
+  .v{flex:1;min-width:0;border:1px solid var(--border-soft);border-radius:10px;padding:7px 3px 6px;text-align:center;cursor:pointer;transition:border-color .15s}
   .v:active{filter:var(--press)}
   .v:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
   .v .pos{font-size:10.5px;font-weight:700;letter-spacing:.06em}
@@ -81,57 +118,59 @@
   .v.f-warn{border-color:var(--warn-border)}.v.f-warn .g{color:var(--warn)}
   .v.f-bad{border-color:var(--bad-border)}.v.f-bad .g{color:var(--bad)}
 
-  .ctr{text-align:center;font-size:11px;font-weight:700;color:var(--text-faint);padding:6px 0;letter-spacing:.13em}
-  .key{display:flex;gap:16px;justify-content:center;padding:11px 0 0;font-size:12.5px;font-weight:500;color:var(--text-dim)}
-  .key i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+  .ctr{text-align:center;font-size:10.5px;font-weight:700;color:var(--text-faint);padding:7px 0;letter-spacing:.12em}
+  .key{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;padding:4px 14px 0;font-size:13px;font-weight:500;color:var(--text-dim)}
+  .key b{font-family:ui-monospace,Menlo,monospace;font-weight:700;color:var(--text);margin-left:3px}
+  .key i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
   .k-i{background:var(--intake-bg);border:1px solid var(--intake)}
   .k-e{background:var(--exhaust-bg);border:1px solid var(--exhaust)}
-  .key2{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;padding:7px 14px 0;font-size:12.5px;font-weight:500;color:var(--text-dim)}
-  .key2 b{font-weight:700}
-  .c-ok{color:var(--ok)}.c-warn{color:var(--warn)}.c-bad{color:var(--bad)}
 
-  .sheet{position:fixed;inset:0;background:var(--sheet-overlay);display:none;align-items:flex-end;z-index:40}
+  .sheet{position:fixed;inset:0;background:var(--sheet-overlay);display:none;align-items:flex-end;justify-content:center;z-index:40}
   .sheet.on{display:flex}
-  .card{width:100%;background:var(--surface-2);border-radius:14px 14px 0 0;padding:18px 16px 26px;border-top:1px solid var(--border-soft);max-height:92vh;overflow-y:auto}
+  .card{width:100%;max-width:680px;background:var(--surface-2);border-radius:18px 18px 0 0;padding:18px 16px 26px;border:1px solid var(--border-soft);border-bottom:none;max-height:92vh;overflow-y:auto}
   .card h2{margin:0 0 2px;font-size:19px;font-weight:700;color:var(--text)}
   .card .spec{margin:0 0 15px;font-size:13.5px;font-weight:500;color:var(--text-dim)}
   .fieldset{margin-bottom:13px}
   .fieldset label{display:block;font-size:13px;font-weight:600;color:var(--text-dim);margin-bottom:5px}
-  input{background:var(--bg);border:1px solid var(--border-soft);color:var(--text);border-radius:6px;padding:14px 9px;font-size:21px;text-align:center;font-family:ui-monospace,Menlo,monospace;width:100%}
+  input{background:var(--bg);border:1px solid var(--border-soft);color:var(--text);border-radius:10px;padding:14px 9px;font-size:21px;text-align:center;font-family:ui-monospace,Menlo,monospace;width:100%}
   input:focus{outline:none;border-color:var(--focus)}
   input:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
   input::placeholder,textarea::placeholder{color:var(--text-faint);opacity:1}
-  .verdict{padding:12px 13px;border-radius:8px;background:var(--surface);font-size:15px;font-weight:500;line-height:1.7;margin-bottom:14px;color:var(--text-dim)}
+  .verdict{padding:12px 13px;border-radius:10px;background:var(--surface);font-size:15px;font-weight:500;line-height:1.7;margin-bottom:14px;color:var(--text-dim)}
   .verdict b{font-family:ui-monospace,Menlo,monospace;color:var(--warn)}
   .verdict .good{color:var(--ok)}
   .verdict .err{color:var(--bad)}
-  button{border-radius:7px;border:1px solid var(--border-soft);background:var(--surface);color:var(--text);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;padding:13px 8px}
+  button{border-radius:10px;border:1px solid var(--border-soft);background:var(--surface);color:var(--text);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;padding:12px 8px}
   button:active{filter:var(--press)}
   button:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
   .acts{display:flex;gap:8px}
   .acts button{flex:1}
-  .clr{color:var(--bad);flex:0 0 78px}
-  footer{position:fixed;bottom:0;left:0;right:0;display:flex;gap:8px;padding:10px 14px;background:var(--bg);border-top:1px solid var(--border)}
-  #out{margin:14px;padding:12px;background:var(--surface);border-radius:8px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;white-space:pre;overflow-x:auto;display:none;color:var(--text-dim)}
-  .note{margin:16px 14px 0;padding:11px 12px;background:var(--surface);border-left:3px solid var(--note-border);font-size:13px;font-weight:500;color:var(--text-dim);line-height:1.65}
-  .tspec-title{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:8px}
+  .clr{color:var(--bad);background:transparent;flex:0 0 78px}
+  .btn-block{width:100%;margin-bottom:10px}
+  footer{position:fixed;bottom:0;left:0;right:0;max-width:680px;margin:0 auto;display:flex;gap:8px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:var(--bg);border-top:1px solid var(--border)}
+  footer button{flex:1}
+  .out-acts{display:flex;gap:8px;margin:14px 14px 0}
+  .out-acts button{flex:1;padding:9px 8px;font-size:13px}
+  #out{margin:14px;padding:12px;background:var(--surface);border:1px solid var(--border-soft);border-radius:12px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;white-space:pre;overflow-x:auto;display:none;color:var(--text-dim)}
+  .note{margin:14px 14px 0;padding:11px 12px;background:var(--surface);border:1px solid var(--border-soft);border-left:3px solid var(--note-border);border-radius:10px;font-size:13px;font-weight:500;color:var(--text-dim);line-height:1.65}
   .tgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:2px}
-  .tbubble{background:var(--bg);border:1px solid var(--border-soft);border-radius:10px;padding:9px 10px;display:flex;flex-direction:column;gap:3px}
+  .tbubble{background:var(--bg);border:1px solid var(--border-soft);border-radius:10px;padding:9px 10px;display:flex;flex-direction:column;gap:2px}
   .tbubble .tb-label{font-size:11.5px;font-weight:600;color:var(--text-dim)}
   .tbubble b{font-family:ui-monospace,Menlo,monospace;font-size:17px;font-weight:700;color:var(--text)}
+  .tbubble .tb-alt{font-size:10.5px;font-weight:600;color:var(--text-faint)}
   .tbubble i{font-size:10.5px;font-style:normal;font-weight:500;color:var(--text-faint)}
   .tspec-src{font-size:11.5px;font-weight:500;color:var(--text-faint);margin-top:10px;padding-top:8px;border-top:1px solid var(--border-soft);line-height:1.55}
   @media (max-width:340px){.tgrid{grid-template-columns:1fr}}
   .saved{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--saved-bg);color:var(--saved-text);padding:6px 14px;border-radius:20px;font-size:12.5px;font-weight:600;opacity:0;transition:opacity .25s;pointer-events:none}
   .saved.on{opacity:1}
 
-  details.meta{margin:14px 14px 0;background:var(--surface);border-radius:8px;border:1px solid var(--border-soft)}
-  details.meta summary{list-style:none;cursor:pointer;padding:12px;font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:baseline;gap:7px}
+  details.meta{margin:10px 14px 0;background:var(--surface);border-radius:12px;border:1px solid var(--border-soft)}
+  details.meta:first-of-type{margin-top:14px}
+  details.meta summary{list-style:none;cursor:pointer;padding:14px;font-size:15px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:7px}
   details.meta summary::-webkit-details-marker{display:none}
-  details.meta summary:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
-  details.meta summary:before{content:'\25b8';font-size:12px;color:var(--text-dim);display:inline-block;transition:transform .15s}
-  details.meta[open] summary:before{transform:rotate(90deg)}
-  .meta-hint{font-weight:500;font-size:12.5px;color:var(--text-dim)}
+  details.meta summary:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:10px}
+  details.meta summary:after{content:'';margin:-4px 4px 0 auto;width:7px;height:7px;border-right:2px solid var(--text-faint);border-bottom:2px solid var(--text-faint);transform:rotate(45deg);transition:transform .15s}
+  details.meta[open] summary:after{transform:rotate(-135deg);margin-top:4px}
   .meta-body{padding:2px 12px 14px}
   .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .meta-grid .fieldset{margin-bottom:0}
@@ -141,8 +180,14 @@
   .fhint{font-size:11.5px;font-weight:600;color:var(--bad);min-height:14px;margin-top:3px}
   @media (max-width:380px){.meta-grid{grid-template-columns:1fr}}
 
+  .hist-row{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid var(--border-soft);font-size:13px;font-weight:600;color:var(--text-dim);cursor:pointer}
+  .hist-row:last-child{border-bottom:none}
+  .hist-row:hover,.hist-row:focus-visible{color:var(--text)}
+  .hist-empty{font-size:13px;font-weight:500;color:var(--text-faint);padding:4px 0 8px}
+
   #printsheet{display:none}
   @media print{
+    body{max-width:none;padding:0}
     body>*{display:none!important}
     #printsheet{display:block!important;padding:24px;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:#111;background:#fff}
     #printsheet h1{font-size:19px;margin:0 0 4px}
@@ -186,12 +231,42 @@
 <header>
   <div class="headrow">
     <h1>Valve clearance log</h1>
+    <div class="headbtns">
+    <button id="btn-tools" class="theme-toggle" aria-label="Tools checklist" title="Tools">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+    </button>
     <button id="btn-theme" class="theme-toggle" aria-label="Switch theme" title="Switch theme">
       <svg id="icon-sun" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
       <svg id="icon-moon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
+    </div>
   </div>
-  <p class="sub">Aprilia V4 &middot; intake 0.10&ndash;0.15 &middot; exhaust 0.20&ndash;0.25 mm &middot; cam towers 12 Nm</p>
+</header>
+
+<section class="ctx">
+  <div class="bikerow">
+    <select id="profile-select" aria-label="Bike"></select>
+    <button id="btn-profile-edit" class="iconbtn" aria-label="Edit bike" title="Edit">&#9998;</button>
+    <button id="btn-profile-add" class="iconbtn" aria-label="Add bike" title="Add">+</button>
+  </div>
+  <div class="pform" id="pform" hidden>
+    <div class="pform-grid">
+      <div class="fieldset"><label>Name</label><input id="pf-name" autocomplete="off"></div>
+      <div class="fieldset">
+        <label>VIN</label>
+        <input id="pf-vin" maxlength="17" autocomplete="off" style="text-transform:uppercase">
+        <div class="fhint" id="pf-vin-hint"></div>
+      </div>
+      <div class="fieldset"><label>Model / year</label><input id="pf-model" autocomplete="off"></div>
+      <div class="fieldset"><label>Interval, mi</label><input id="pf-interval" inputmode="numeric" autocomplete="off"></div>
+    </div>
+    <div class="acts">
+      <button id="pf-delete" class="clr" hidden>Delete</button>
+      <button id="pf-cancel">Cancel</button>
+      <button id="pf-save">Save</button>
+    </div>
+  </div>
+
   <div class="kitrow">
     <span class="kitrow-label">Shim kit</span>
     <div class="kit-toggle" role="tablist" aria-label="Shim kit">
@@ -206,20 +281,29 @@
     <div class="pill bad"><b id="t-bad">0</b><span>out</span></div>
     <div class="pill"><b id="t-done">0</b><span>logged</span></div>
   </div>
-</header>
+  <div class="duerow" id="duerow" hidden><span id="due-text"></span></div>
+</section>
+
+<section class="diagram">
+  <div class="orient"><span class="arw">&#9650;</span> FRONT OF BIKE</div>
+  <div class="vlabel">EXHAUST OUTBOARD</div>
+  <div class="grid" id="top"></div>
+  <div class="ctr">CENTER OF V &mdash; INTAKES FACE IN</div>
+  <div class="grid" id="bot"></div>
+  <div class="vlabel">EXHAUST OUTBOARD</div>
+  <div class="orient-b">REAR OF BIKE <span class="arw">&#9660;</span></div>
+  <div class="key">
+    <span><i class="k-i"></i>Intake <b>0.10&ndash;0.15 mm</b></span>
+    <span><i class="k-e"></i>Exhaust <b>0.20&ndash;0.25 mm</b></span>
+  </div>
+</section>
 
 <details class="meta" id="meta">
-  <summary>Service record <span class="meta-hint">— date, mileage, VIN, technician (optional, included in export)</span></summary>
+  <summary>Service record</summary>
   <div class="meta-body">
     <div class="meta-grid">
       <div class="fieldset"><label>Date performed</label><input id="m-date" type="date" autocomplete="off"></div>
-      <div class="fieldset"><label>Odometer</label><input id="m-odo" autocomplete="off"></div>
-      <div class="fieldset">
-        <label>VIN</label>
-        <input id="m-vin" maxlength="17" autocomplete="off" style="text-transform:uppercase">
-        <div class="fhint" id="m-vin-hint"></div>
-      </div>
-      <div class="fieldset"><label>Model / year</label><input id="m-model" autocomplete="off"></div>
+      <div class="fieldset"><label>Odometer, mi</label><input id="m-odo" inputmode="numeric" autocomplete="off"></div>
       <div class="fieldset"><label>Performed by</label><input id="m-tech" autocomplete="off"></div>
       <div class="fieldset"><label>Location</label><input id="m-loc" autocomplete="off"></div>
     </div>
@@ -230,43 +314,40 @@
   </div>
 </details>
 
-<div class="orient"><span class="arw">&#9650;</span> FRONT OF BIKE</div>
-<div class="vlabel">EXHAUST OUTBOARD</div>
-<div class="grid" id="top"></div>
-<div class="ctr">CENTER OF V &mdash; INTAKES FACE IN</div>
-<div class="grid" id="bot"></div>
-<div class="vlabel">EXHAUST OUTBOARD</div>
-<div class="orient-b">REAR OF BIKE <span class="arw">&#9660;</span></div>
-
-<div class="key">
-  <span><i class="k-i"></i>Intake</span>
-  <span><i class="k-e"></i>Exhaust</span>
-</div>
-<div class="key2">
-  <span><b class="c-ok">ok</b> mid-spec</span>
-  <span><b class="c-warn">low</b> within 0.015 of the tight limit</span>
-  <span><b class="c-bad">tight / loose</b> out of spec</span>
-</div>
-
-<div class="note" id="torque-note">
-  <div class="tspec-title">Valve service torque specs</div>
-  <div class="tgrid">
-    <div class="tbubble"><span class="tb-label">Tank front mount</span><b>8 Nm</b></div>
-    <div class="tbubble"><span class="tb-label">Tank rear mount</span><b>7 Nm</b></div>
-    <div class="tbubble"><span class="tb-label">Head/valve cover</span><b>10 Nm</b></div>
-    <div class="tbubble"><span class="tb-label">Spark plugs</span><b>12 Nm</b></div>
-    <div class="tbubble"><span class="tb-label">Coil fixing screws</span><b>8 Nm</b><i>Loctite 243</i></div>
-    <div class="tbubble"><span class="tb-label">Timing inspection cap</span><b>25 Nm</b></div>
-    <div class="tbubble"><span class="tb-label">Cam tower screws</span><b>12 Nm</b></div>
-    <div class="tbubble"><span class="tb-label">Cam timing gear screw</span><b>30 Nm</b><i>Loctite 243 &middot; replace each time</i></div>
+<details class="meta" id="histpanel">
+  <summary>Service history</summary>
+  <div class="meta-body">
+    <button id="btn-save-history" class="btn-block">Save current &amp; start new</button>
+    <div id="hist-list"></div>
   </div>
-  <div class="tspec-src">Source: 2016 Tuono V4 1100 RR / Factory service manual &mdash; Characteristics: Fuel Tank, Clutch Cover, Valve Cover, Heads, Timing System. Confirm against your own model/year manual before use &mdash; torque specs vary by generation.</div>
-</div>
+</details>
+
+<details class="meta" id="torque-note">
+  <summary>Torque specs</summary>
+  <div class="meta-body">
+    <div class="tgrid">
+      <div class="tbubble"><span class="tb-label">Tank front mount</span><b>8 Nm</b><span class="tb-alt">5.90 lb&middot;ft</span></div>
+      <div class="tbubble"><span class="tb-label">Tank rear mount</span><b>7 Nm</b><span class="tb-alt">5.16 lb&middot;ft</span></div>
+      <div class="tbubble"><span class="tb-label">Head/valve cover</span><b>10 Nm</b><span class="tb-alt">7.38 lb&middot;ft</span></div>
+      <div class="tbubble"><span class="tb-label">Spark plugs</span><b>12 Nm</b><span class="tb-alt">8.85 lb&middot;ft</span></div>
+      <div class="tbubble"><span class="tb-label">Coil fixing screws</span><b>8 Nm</b><span class="tb-alt">5.90 lb&middot;ft</span><i>Loctite 243</i></div>
+      <div class="tbubble"><span class="tb-label">Timing inspection cap</span><b>25 Nm</b><span class="tb-alt">18.44 lb&middot;ft</span></div>
+      <div class="tbubble"><span class="tb-label">Cam tower screws</span><b>12 Nm</b><span class="tb-alt">8.85 lb&middot;ft</span></div>
+      <div class="tbubble"><span class="tb-label">Cam timing gear screw</span><b>30 Nm</b><span class="tb-alt">22.13 lb&middot;ft</span><i>Loctite 243 &middot; replace each time</i></div>
+    </div>
+    <div class="tspec-src">2016 Tuono V4 1100 RR/Factory manual. Confirm against your own manual &mdash; specs vary by year.</div>
+  </div>
+</details>
 
 <div class="note" id="nostore" style="display:none;border-left-color:var(--bad-border);color:var(--bad)">
-  Storage is blocked in this browser, so readings will be lost when the page closes. Export the log before you leave.
+  Storage is blocked in this browser &mdash; export before you leave.
 </div>
 
+<div class="out-acts" id="out-acts" hidden>
+  <button id="btn-copy">Copy</button>
+  <button id="btn-csv">CSV</button>
+  <button id="btn-out-close">Close</button>
+</div>
 <pre id="out"></pre>
 <div class="saved" id="saved">Saved</div>
 
@@ -278,12 +359,12 @@
 
 <div id="printsheet">
   <h1>Aprilia V4 &mdash; Valve Clearance Service Record</h1>
-  <p class="psub">Intake 0.10&ndash;0.15 mm &middot; Exhaust 0.20&ndash;0.25 mm &middot; Cam tower torque 12 Nm</p>
+  <p class="psub">Intake 0.10&ndash;0.15 mm (.0039&ndash;.0059 in) &middot; Exhaust 0.20&ndash;0.25 mm (.0079&ndash;.0098 in) &middot; Cam tower torque 12 Nm</p>
   <table class="pmeta">
     <tr><th>Date performed</th><td id="p-date"></td><th>Odometer</th><td id="p-odo"></td></tr>
-    <tr><th>Model / year</th><td id="p-model"></td><th>VIN</th><td id="p-vin"></td></tr>
-    <tr><th>Performed by</th><td id="p-tech"></td><th>Location</th><td id="p-loc"></td></tr>
-    <tr><th>Shim kit</th><td id="p-kit" colspan="3"></td></tr>
+    <tr><th>Bike</th><td id="p-bike"></td><th>Model / year</th><td id="p-model"></td></tr>
+    <tr><th>VIN</th><td id="p-vin"></td><th>Performed by</th><td id="p-tech"></td></tr>
+    <tr><th>Location</th><td id="p-loc"></td><th>Shim kit</th><td id="p-kit"></td></tr>
   </table>
   <div class="porient">&#9650; FRONT OF BIKE</div>
   <div class="prowlabel">EXHAUST OUTBOARD</div>
@@ -298,7 +379,23 @@
     <div class="sigline">Technician signature</div>
     <div class="sigline">Date</div>
   </div>
-  <p class="pfooter">Owner-recorded service log &mdash; not verified or certified by Aprilia or an authorized dealer. Generated with aprilia-v4-valve-log, a local, offline tool; nothing in this record is uploaded anywhere.</p>
+  <p class="pfooter">Owner-recorded log &mdash; not verified by Aprilia or a dealer. Local tool, nothing uploaded.</p>
+</div>
+
+<div class="drawer" id="drawer">
+  <div class="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+    <div class="drawer-head">
+      <h2 id="drawer-title">Tools <span id="tools-count"></span></h2>
+      <button id="btn-tools-close" class="drawer-close">Close</button>
+    </div>
+    <div class="kit-toggle tmode" role="tablist" aria-label="Job scope">
+      <button class="mode-tab" data-mode="check" role="tab">Check only</button>
+      <button class="mode-tab" data-mode="adjust" role="tab">Full adjust</button>
+    </div>
+    <div id="tools-list"></div>
+    <button id="btn-tools-reset" class="drawer-reset">Uncheck all</button>
+    <div class="tspec-src">OEM part numbers: 2016 Tuono V4 1100 RR/Factory manual. <span class="tsrc">guide</span> = Fostytou's ApriliaForum valve guide v1.09 &mdash; community source, not verified against the manual.</div>
+  </div>
 </div>
 
 <div class="sheet" id="sheet">
@@ -308,14 +405,17 @@
     <div class="fieldset">
       <label>Measured gap, mm</label>
       <input id="sh-gap" inputmode="decimal" placeholder="0.000" autocomplete="off">
+      <div class="fhint" id="sh-gap-hint"></div>
     </div>
     <div class="fieldset">
-      <label>Old shim thickness, mm &mdash; optional, cams out</label>
+      <label>Old shim, mm</label>
       <input id="sh-shim" inputmode="decimal" placeholder="0.00" autocomplete="off">
+      <div class="fhint" id="sh-shim-hint"></div>
     </div>
     <div class="fieldset">
-      <label>New shim, mm &mdash; optional, try a size or record what went in</label>
+      <label>New shim, mm</label>
       <input id="sh-newshim" inputmode="decimal" placeholder="0.00" autocomplete="off">
+      <div class="fhint" id="sh-newshim-hint"></div>
     </div>
     <div class="verdict" id="sh-verdict">Enter the thickest feeler that seated.</div>
     <div class="acts">
@@ -332,22 +432,23 @@ var SPEC={
 };
 var MARGIN=0.015;       // distance from the tight limit that counts as marginal
 
+function mmToIn(mm){return (mm/25.4).toFixed(4);}
+
 // Real, purchasable shim sizes per kit — suggestions snap to these rather
 // than assuming a uniform step, since actual catalogs aren't uniform (OEM
 // alternates +0.02/+0.03mm) and different kits cover different ranges.
 var SHIM_KITS={
   oem:{
     name:'OEM',
-    range:'1.75–3.15 mm · alternating 0.02/0.03mm steps (OEM pad table)',
+    range:'1.75–3.15 mm, 0.02/0.03mm steps',
     sizes:[1.75,1.77,1.80,1.82,1.85,1.87,1.90,1.92,1.95,1.97,2.00,2.02,2.05,2.07,2.10,2.12,2.15,2.17,2.20,2.22,2.25,2.27,2.30,2.32,2.35,2.37,2.40,2.42,2.45,2.47,2.50,2.52,2.55,2.57,2.60,2.62,2.65,2.67,2.70,2.72,2.75,2.77,2.80,2.82,2.85,2.87,2.90,2.92,2.95,2.97,3.00,3.02,3.05,3.07,3.10,3.12,3.15]
   },
   hotcams:{
     name:'Hot Cams',
-    range:'1.72–2.60 mm · 0.04mm steps (Hot Cams HCSHIM00, 8.90mm)',
+    range:'1.72–2.60 mm, 0.04mm steps',
     sizes:[1.72,1.76,1.80,1.84,1.88,1.92,1.96,2.00,2.04,2.08,2.12,2.16,2.20,2.24,2.28,2.32,2.36,2.40,2.44,2.48,2.52,2.56,2.60]
   }
 };
-var KIT_KEY='v4valvelog-kit';
 var currentKit='oem';
 function nearestSize(list,target){
   var best=list[0],bd=Math.abs(best-target);
@@ -362,6 +463,13 @@ var LEFT=[2,1];         // cylinders in the left column, so medial faces the cen
 var data={}, cur=null, timer=null;
 
 function k(c,t,p){return 'c'+c+t+p;}
+
+function flashSaved(msg){
+  var s=document.getElementById('saved');
+  s.textContent=msg||'Saved';
+  s.className='saved on';
+  setTimeout(function(){s.className='saved';},1200);
+}
 
 function build(){
   ROWS.forEach(function(r){
@@ -399,15 +507,22 @@ function build(){
   }
 }
 
+// Pure spec classification — no kit/shim math, reused for live tiles and
+// for reading back completed history entries.
+function classifyGap(m,type){
+  var sp=SPEC[type];
+  if(isNaN(m))return null;
+  if(m<sp.lo)return{cls:'bad',word:'tight',sp:sp};
+  if(m>sp.hi)return{cls:'bad',word:'loose',sp:sp};
+  if(m<=sp.lo+MARGIN)return{cls:'warn',word:'low',sp:sp};
+  return{cls:'ok',word:'ok',sp:sp};
+}
+
 function calc(kk){
   var t=kk.charAt(2),sp=SPEC[t],d=data[kk]||{},m=parseFloat(d.m);
   if(isNaN(m)||d.m==='')return null;
-  var r={m:m,sp:sp,t:t};
-
-  if(m<sp.lo){r.cls='bad';r.word='tight';}
-  else if(m>sp.hi){r.cls='bad';r.word='loose';}
-  else if(m<=sp.lo+MARGIN){r.cls='warn';r.word='low';}
-  else{r.cls='ok';r.word='ok';}
+  var cl=classifyGap(m,t);
+  var r={m:m,sp:sp,t:t,cls:cl.cls,word:cl.word};
 
   // A shim change is only proposed for out-of-spec or marginal valves.
   r.act=(r.cls!=='ok');
@@ -509,11 +624,12 @@ function openValve(kk){
   document.getElementById('sh-title').textContent=
     'Cylinder '+c+' · '+sp.n+' · '+(p==='m'?'Medial':'Lateral');
   document.getElementById('sh-spec').textContent=
-    'Spec '+sp.lo.toFixed(2)+'–'+sp.hi.toFixed(2)+' mm';
+    'Spec '+sp.lo.toFixed(2)+'–'+sp.hi.toFixed(2)+' mm ('+mmToIn(sp.lo)+'–'+mmToIn(sp.hi)+' in)';
   document.getElementById('sh-gap').value=d.m||'';
   document.getElementById('sh-shim').value=d.s||'';
   document.getElementById('sh-newshim').value=d.ns||'';
   verdict();
+  checkHints();
   document.getElementById('sheet').className='sheet on';
   document.getElementById('sh-gap').focus();
 }
@@ -522,12 +638,25 @@ function closeSheet(){
   if(lastFocused&&lastFocused.focus)lastFocused.focus();
 }
 
+// Soft sanity check on entered numbers — catches fat-finger typos (e.g. a
+// decimal point missed) without blocking entry.
+function rangeHint(id,hintId,lo,hi){
+  var v=document.getElementById(id).value,hint=document.getElementById(hintId);
+  var n=parseFloat(v);
+  hint.textContent=(v!==''&&!isNaN(n)&&(n<lo||n>hi))?'double-check':'';
+}
+function checkHints(){
+  rangeHint('sh-gap','sh-gap-hint',0.02,0.60);
+  rangeHint('sh-shim','sh-shim-hint',1.50,3.50);
+  rangeHint('sh-newshim','sh-newshim-hint',1.50,3.50);
+}
+
 function verdict(){
   var v=document.getElementById('sh-verdict'),r=calc(cur);
   if(!r){v.textContent='Enter the thickest feeler that seated.';document.getElementById('sh-newshim').placeholder='0.00';return;}
   var h='Gap <b>'+r.m.toFixed(3)+'</b> — ';
   if(r.cls==='ok')h+='<span class="good">in spec</span>';
-  else if(r.cls==='warn')h+='<span style="color:var(--warn)">in spec, within '+MARGIN.toFixed(3)+' of the tight limit</span>';
+  else if(r.cls==='warn')h+='<span style="color:var(--warn)">in spec, near tight limit</span>';
   else h+='<span class="err">out of spec, '+r.word+'</span>';
 
   if(!r.act){
@@ -559,19 +688,19 @@ function verdict(){
 
 document.getElementById('sh-gap').addEventListener('input',function(){
   data[cur]=data[cur]||{};data[cur].m=this.value;
-  verdict();paint(cur);tally();save();
+  verdict();paint(cur);tally();checkHints();saveWorkingData();
 });
 document.getElementById('sh-shim').addEventListener('input',function(){
   data[cur]=data[cur]||{};data[cur].s=this.value;
-  verdict();paint(cur);save();
+  verdict();paint(cur);checkHints();saveWorkingData();
 });
 document.getElementById('sh-newshim').addEventListener('input',function(){
   data[cur]=data[cur]||{};data[cur].ns=this.value;
-  verdict();paint(cur);save();
+  verdict();paint(cur);checkHints();saveWorkingData();
 });
 document.getElementById('sh-done').addEventListener('click',closeSheet);
 document.getElementById('sh-clear').addEventListener('click',function(){
-  delete data[cur];paint(cur);tally();save();
+  delete data[cur];paint(cur);tally();saveWorkingData();
   closeSheet();
 });
 document.getElementById('sheet').addEventListener('click',function(e){
@@ -581,33 +710,149 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape'&&document.getElementById('sheet').className.indexOf('on')>-1)closeSheet();
 });
 
-var KEY='v4valvelog';
+// ---- Storage keys ----
+// Per bike (profile): working data, working meta, and saved history all
+// live under keys namespaced by the profile's id, so switching bikes never
+// mixes readings. Kit and interval are stored on the profile itself.
+function dataKey(id){return 'v4vl-data:'+id;}
+function metaKey(id){return 'v4vl-meta:'+id;}
+function histKey(id){return 'v4vl-hist:'+id;}
+var PROFILES_KEY='v4vl-profiles';
+var ACTIVE_KEY='v4vl-active';
+var profiles=[], activeId=null;
 
-function save(){
+function activeProfile(){
+  for(var i=0;i<profiles.length;i++)if(profiles[i].id===activeId)return profiles[i];
+  return profiles[0];
+}
+function saveProfiles(){try{localStorage.setItem(PROFILES_KEY,JSON.stringify(profiles));}catch(e){}}
+
+// One-time upgrade from the single-bike v2 storage format.
+function migrateLegacy(){
+  try{
+    if(localStorage.getItem(PROFILES_KEY))return;
+    var oldData=localStorage.getItem('v4valvelog');
+    var oldMetaRaw=localStorage.getItem('v4valvelog-meta');
+    var oldKit=localStorage.getItem('v4valvelog-kit');
+    if(!oldData&&!oldMetaRaw)return;
+    var oldMeta=oldMetaRaw?JSON.parse(oldMetaRaw):{};
+    var id='legacy';
+    profiles=[{
+      id:id,
+      name:oldMeta['m-model']||'My Aprilia V4',
+      vin:oldMeta['m-vin']||'',
+      model:oldMeta['m-model']||'',
+      kit:(oldKit&&SHIM_KITS[oldKit])?oldKit:'oem',
+      interval:''
+    }];
+    activeId=id;
+    saveProfiles();
+    localStorage.setItem(ACTIVE_KEY,id);
+    if(oldData)localStorage.setItem(dataKey(id),oldData);
+    localStorage.setItem(metaKey(id),JSON.stringify({
+      'm-date':oldMeta['m-date']||'','m-odo':oldMeta['m-odo']||'',
+      'm-tech':oldMeta['m-tech']||'','m-loc':oldMeta['m-loc']||'','m-notes':oldMeta['m-notes']||''
+    }));
+    localStorage.removeItem('v4valvelog');
+    localStorage.removeItem('v4valvelog-meta');
+    localStorage.removeItem('v4valvelog-kit');
+  }catch(e){}
+}
+
+function loadProfiles(){
+  try{
+    var raw=localStorage.getItem(PROFILES_KEY);
+    profiles=raw?JSON.parse(raw):[];
+  }catch(e){profiles=[];}
+  if(!profiles.length){
+    profiles=[{id:'p'+Date.now().toString(36),name:'My Aprilia V4',vin:'',model:'',kit:'oem',interval:''}];
+    saveProfiles();
+  }
+  try{activeId=localStorage.getItem(ACTIVE_KEY);}catch(e){}
+  if(!activeId||!profiles.some(function(p){return p.id===activeId;}))activeId=profiles[0].id;
+}
+
+function paintProfileSelect(){
+  var sel=document.getElementById('profile-select');
+  sel.innerHTML='';
+  profiles.forEach(function(p){
+    var o=document.createElement('option');
+    o.value=p.id;o.textContent=p.name;
+    if(p.id===activeId)o.selected=true;
+    sel.appendChild(o);
+  });
+}
+document.getElementById('profile-select').addEventListener('change',function(){
+  setActive(this.value);
+});
+
+function setActive(id){
+  activeId=id;
+  try{localStorage.setItem(ACTIVE_KEY,id);}catch(e){}
+  currentKit=(activeProfile().kit&&SHIM_KITS[activeProfile().kit])?activeProfile().kit:'oem';
+  paintKitTabs();
+  paintProfileSelect();
+  loadWorkingData();
+  loadWorkingMeta();
+  renderHistoryList();
+  loadTools();
+}
+
+// ---- Working data (current, in-progress 16 readings) ----
+function loadWorkingData(){
+  data={};
+  try{
+    var raw=localStorage.getItem(dataKey(activeId));
+    if(raw)data=JSON.parse(raw);
+  }catch(e){}
+  var vs=document.querySelectorAll('.v');
+  for(var i=0;i<vs.length;i++)paint(vs[i].dataset.k);
+  tally();
+}
+function saveWorkingData(){
+  // Capture the id and the object reference now — if the user switches
+  // bikes before this timer fires, `activeId`/`data` will already point
+  // at the new bike, and firing against those live globals would save
+  // this bike's readings into the wrong bike's slot (or vice versa).
+  var id=activeId, snapshot=data;
   clearTimeout(timer);
   timer=setTimeout(function(){
     try{
-      localStorage.setItem(KEY,JSON.stringify(data));
-      var s=document.getElementById('saved');
-      s.className='saved on';
-      setTimeout(function(){s.className='saved';},1200);
+      localStorage.setItem(dataKey(id),JSON.stringify(snapshot));
+      flashSaved();
     }catch(e){
-      // Private browsing or storage disabled: readings stay for this session only.
-      var w=document.getElementById('nostore');
-      if(w)w.style.display='block';
+      document.getElementById('nostore').style.display='block';
     }
   },500);
 }
 
-function load(){
+// ---- Working meta (this visit's date/odo/tech/location/notes) ----
+var META_FIELDS=['m-date','m-odo','m-tech','m-loc','m-notes'];
+function loadWorkingMeta(){
+  META_FIELDS.forEach(function(id){document.getElementById(id).value='';});
   try{
-    var raw=localStorage.getItem(KEY);
-    if(!raw)return;
-    data=JSON.parse(raw);
-    for(var kk in data)paint(kk);
-    tally();
+    var raw=localStorage.getItem(metaKey(activeId));
+    if(raw){
+      var m=JSON.parse(raw);
+      META_FIELDS.forEach(function(id){if(m[id])document.getElementById(id).value=m[id];});
+    }
   }catch(e){}
+  if(!document.getElementById('m-date').value){
+    document.getElementById('m-date').value=new Date().toISOString().slice(0,10);
+  }
+  saveWorkingMeta();
 }
+function saveWorkingMeta(){
+  try{
+    var m={};
+    META_FIELDS.forEach(function(id){m[id]=document.getElementById(id).value;});
+    localStorage.setItem(metaKey(activeId),JSON.stringify(m));
+  }catch(e){}
+  updateDue();
+}
+META_FIELDS.forEach(function(id){
+  document.getElementById(id).addEventListener('input',saveWorkingMeta);
+});
 
 function fmtDate(v){
   if(!v)return '—';
@@ -617,19 +862,364 @@ function fmtDate(v){
 }
 function mv(id){var v=document.getElementById(id).value;return v?v:'—';}
 
-document.getElementById('btn-export').addEventListener('click',function(){
-  var o=document.getElementById('out');
-  if(o.style.display==='block'){o.style.display='none';return;}
-  var bar='='.repeat(43);
+function updateDue(){
+  var p=activeProfile(),row=document.getElementById('duerow');
+  var odo=parseFloat(document.getElementById('m-odo').value);
+  var interval=parseFloat(p.interval);
+  if(!isNaN(odo)&&!isNaN(interval)&&interval>0){
+    var due=Math.round(odo+interval);
+    document.getElementById('due-text').textContent='Next check ~'+due.toLocaleString()+' mi';
+    row.hidden=false;
+  }else{
+    row.hidden=true;
+  }
+}
+
+// ---- Add / edit bike ----
+var pfMode='add';
+function openProfileForm(mode){
+  pfMode=mode;
+  var p=mode==='edit'?activeProfile():{name:'',vin:'',model:'',interval:''};
+  document.getElementById('pf-name').value=p.name||'';
+  document.getElementById('pf-vin').value=p.vin||'';
+  document.getElementById('pf-model').value=p.model||'';
+  document.getElementById('pf-interval').value=p.interval||'';
+  document.getElementById('pf-vin-hint').textContent='';
+  document.getElementById('pf-delete').hidden=(mode!=='edit'||profiles.length<2);
+  document.getElementById('pform').hidden=false;
+  document.getElementById('pf-name').focus();
+}
+function closeProfileForm(){document.getElementById('pform').hidden=true;}
+document.getElementById('btn-profile-add').addEventListener('click',function(){openProfileForm('add');});
+document.getElementById('btn-profile-edit').addEventListener('click',function(){openProfileForm('edit');});
+document.getElementById('pf-cancel').addEventListener('click',closeProfileForm);
+document.getElementById('pf-vin').addEventListener('input',function(){
+  var n=this.value.length;
+  document.getElementById('pf-vin-hint').textContent=(n>0&&n!==17)?'not 17 chars':'';
+});
+document.getElementById('pf-save').addEventListener('click',function(){
+  var name=document.getElementById('pf-name').value.trim();
+  if(!name){document.getElementById('pf-name').focus();return;}
+  var vals={
+    name:name,
+    vin:document.getElementById('pf-vin').value.trim().toUpperCase(),
+    model:document.getElementById('pf-model').value.trim(),
+    interval:document.getElementById('pf-interval').value.trim()
+  };
+  if(pfMode==='edit'){
+    var p=activeProfile();
+    p.name=vals.name;p.vin=vals.vin;p.model=vals.model;p.interval=vals.interval;
+    saveProfiles();
+    paintProfileSelect();
+    updateDue();
+  }else{
+    var np={id:'p'+Date.now().toString(36),name:vals.name,vin:vals.vin,model:vals.model,kit:'oem',interval:vals.interval};
+    profiles.push(np);
+    saveProfiles();
+    setActive(np.id);
+  }
+  closeProfileForm();
+});
+document.getElementById('pf-delete').addEventListener('click',function(){
+  if(profiles.length<2)return;
+  if(!confirm('Delete this bike and its saved data?'))return;
+  var id=activeId;
+  profiles=profiles.filter(function(p){return p.id!==id;});
+  saveProfiles();
+  try{
+    localStorage.removeItem(dataKey(id));
+    localStorage.removeItem(metaKey(id));
+    localStorage.removeItem(histKey(id));
+    localStorage.removeItem(toolsKey(id));
+  }catch(e){}
+  setActive(profiles[0].id);
+  closeProfileForm();
+});
+
+// ---- Shim kit (per bike) ----
+function paintKitTabs(){
+  document.querySelectorAll('.kit-tab').forEach(function(b){
+    var on=b.dataset.kit===currentKit;
+    b.classList.toggle('active',on);
+    b.setAttribute('aria-selected',on?'true':'false');
+  });
+  document.getElementById('kit-range').textContent=SHIM_KITS[currentKit].range;
+}
+function setKit(kk){
+  if(!SHIM_KITS[kk])return;
+  currentKit=kk;
+  var p=activeProfile();
+  if(p){p.kit=kk;saveProfiles();}
+  paintKitTabs();
+  var vs=document.querySelectorAll('.v');
+  for(var i=0;i<vs.length;i++)paint(vs[i].dataset.k);
+  if(cur)verdict();
+}
+document.querySelectorAll('.kit-tab').forEach(function(b){
+  b.addEventListener('click',function(){setKit(this.dataset.kit);});
+});
+
+// ---- Service history ----
+function loadHistory(){
+  try{
+    var raw=localStorage.getItem(histKey(activeId));
+    return raw?JSON.parse(raw):[];
+  }catch(e){return [];}
+}
+function saveHistory(list){try{localStorage.setItem(histKey(activeId),JSON.stringify(list));}catch(e){}}
+
+function renderHistoryList(){
+  var wrap=document.getElementById('hist-list');
+  var list=loadHistory();
+  if(!list.length){wrap.innerHTML='<div class="hist-empty">No saved services yet.</div>';return;}
+  var h='';
+  for(var idx=list.length-1;idx>=0;idx--){
+    var entry=list[idx],n=0,b=0;
+    for(var kk in entry.readings){
+      var m=parseFloat(entry.readings[kk].m);
+      if(isNaN(m))continue;
+      n++;
+      var cl=classifyGap(m,kk.charAt(2));
+      if(cl.cls==='bad')b++;
+    }
+    h+='<div class="hist-row" data-idx="'+idx+'" tabindex="0" role="button">'
+      +'<span>'+fmtDate(entry.date)+' &middot; '+(entry.odo||'—')+' mi</span>'
+      +'<span>'+n+'/16 &middot; '+b+' out</span></div>';
+  }
+  wrap.innerHTML=h;
+  wrap.querySelectorAll('.hist-row').forEach(function(el){
+    el.addEventListener('click',function(){viewHistoryEntry(parseInt(this.dataset.idx,10));});
+    el.addEventListener('keydown',function(e){
+      if(e.key==='Enter'||e.key===' '){e.preventDefault();viewHistoryEntry(parseInt(this.dataset.idx,10));}
+    });
+  });
+}
+
+document.getElementById('btn-save-history').addEventListener('click',function(){
+  var n=0;
+  for(var kk in data)if(data[kk]&&data[kk].m)n++;
+  if(n===0){alert('No readings to save yet.');return;}
+  var entry={
+    savedAt:Date.now(),
+    date:document.getElementById('m-date').value,
+    odo:document.getElementById('m-odo').value,
+    tech:document.getElementById('m-tech').value,
+    loc:document.getElementById('m-loc').value,
+    notes:document.getElementById('m-notes').value,
+    kitName:SHIM_KITS[currentKit].name,
+    readings:data
+  };
+  var list=loadHistory();
+  list.push(entry);
+  saveHistory(list);
+
+  data={};
+  saveWorkingData();
+  document.getElementById('m-date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('m-odo').value='';
+  document.getElementById('m-notes').value='';
+  saveWorkingMeta();
+  var vs=document.querySelectorAll('.v');
+  for(var i=0;i<vs.length;i++)paint(vs[i].dataset.k);
+  tally();
+  renderHistoryList();
+  toolState={};saveTools();renderTools();
+  flashSaved('Saved to history');
+});
+
+function historyRowsData(entry){
+  var out=[];
+  [2,4,1,3].forEach(function(c){
+    ['e','i'].forEach(function(t){
+      ['m','l'].forEach(function(p){
+        var kk=k(c,t,p),d=(entry.readings&&entry.readings[kk])||{},m=parseFloat(d.m);
+        out.push({
+          cyl:c,
+          label:(t==='e'?'EX':'IN')+' '+(p==='m'?'MED':'LAT'),
+          gap:d.m?parseFloat(d.m).toFixed(3):null,
+          shim:(d.s&&d.s!=='')?parseFloat(d.s).toFixed(2):null,
+          newshim:(d.ns&&d.ns!=='')?parseFloat(d.ns).toFixed(2):null,
+          cl:isNaN(m)?null:classifyGap(m,t)
+        });
+      });
+    });
+  });
+  return out;
+}
+function viewHistoryEntry(idx){
+  var list=loadHistory(),entry=list[idx];
+  if(!entry)return;
+  var p=activeProfile(),bar='='.repeat(43);
+  var L=[bar,'APRILIA V4 — VALVE CLEARANCE SERVICE RECORD (saved)',bar,'',
+    'Date performed:   '+fmtDate(entry.date),
+    'Bike:             '+(p.name||'—'),
+    'Model / year:     '+(p.model||'—'),
+    'VIN:              '+(p.vin?p.vin.toUpperCase():'—'),
+    'Odometer:         '+(entry.odo||'—'),
+    'Performed by:     '+(entry.tech||'—'),
+    'Location:         '+(entry.loc||'—'),
+    'Shim kit:         '+(entry.kitName||'—'),'',
+    'Spec: Intake 0.10-0.15 mm  ·  Exhaust 0.20-0.25 mm  ·  Cam tower torque 12 Nm',
+    '-'.repeat(43)];
+  var curCyl=null;
+  historyRowsData(entry).forEach(function(row){
+    if(row.cyl!==curCyl){if(curCyl!==null)L.push('');curCyl=row.cyl;L.push('CYLINDER '+row.cyl);}
+    var g=row.gap||'  -  ',sOut=row.shim||' -  ',sIn=row.newshim||' -  ';
+    L.push('  '+row.label+'   gap '+g+'   old shim '+sOut+'   new shim '+sIn+(row.cl?'   '+row.cl.word:''));
+  });
+  L.push('-'.repeat(43));
+  if(entry.notes){L.push('Notes:');entry.notes.split('\n').forEach(function(line){L.push('  '+line);});L.push('');}
+  L.push(bar);
+  showOut(L.join('\n'));
+}
+
+// ---- Tools checklist ----
+// Untagged OEM part numbers are from the manual's valve clearance procedure.
+// src:'g' marks items from Fostytou's ApriliaForum guide (v1.09) — community
+// knowledge, not verified against the manual, and labeled as such in the UI.
+// `alt` is a guide-sourced substitute for an OEM tool.
+// stage:'check' groups are all a clearance check needs; 'adjust' adds the
+// teardown for changing shims.
+var TOOLS=[
+  {g:'Check — tools',stage:'check',items:[
+    {id:'feeler',n:'Feeler gauges, pointed tip',pn:'TR342222',note:'0.10–0.15 & 0.20–0.25 mm',src:'g'},
+    {id:'torque',n:'Torque wrench, low range',note:'7–30 Nm, in·lb scale helps'},
+    {id:'plug',n:'Spark plug socket + 6" wobble ext.',src:'g'},
+    {id:'sock8',n:'8 mm socket',note:'coil screws',src:'g'},
+    {id:'crankhex',n:'Hex socket for crank bolt',note:'guide says 8 mm and 10 mm — confirm on bike',src:'g'},
+    {id:'tsq12',n:'12 mm triple-square key',note:'crank rotation cap; T55 can strip it',src:'g'},
+    {id:'ball4',n:'4 mm ball-end hex, ≥6" long',note:'velocity stacks; shank ≤4 mm',src:'g'},
+    {id:'hexset',n:'3, 4, 5 mm hex keys',note:'tank, battery, fairings',src:'g'},
+    {id:'phil',n:'Phillips, large + medium',note:'airbox',src:'g'},
+    {id:'flat',n:'Small flat screwdrivers ×2',note:'injector clips',src:'g'},
+    {id:'needle',n:'Long needle-nose pliers',src:'g'},
+    {id:'clippliers',n:'Clip pliers',pn:'020877Y',note:'intake manifold clips',alt:'sacrificial 45° long-nose pliers, ground to fit'},
+    {id:'scraper',n:'Nylon gasket scraper + remover',note:'no steel, no Scotch-Brite',src:'g'},
+    {id:'magnet',n:'Magnet pickup',note:'tappet removal'}
+  ]},
+  {g:'Check — parts',stage:'check',items:[
+    {id:'vcgasket',n:'Valve cover gaskets ×2',pn:'AF1-897443 kit',src:'g'},
+    {id:'plugwell',n:'Spark plug well gaskets ×4',note:'in AF1 kit',src:'g'},
+    {id:'vcbolt',n:'Valve cover bolt gaskets ×6',note:'in AF1 kit',src:'g'},
+    {id:'threebond',n:'ThreeBond sealant',src:'g'},
+    {id:'loctite',n:'Loctite 243',note:'oil-resistant; not 242 on oiled threads'},
+    {id:'clamps',n:'58 mm worm clamps ×2–4',pn:'RA09402-58208',note:'replace the OEM clips',src:'g'},
+    {id:'plugs',n:'Spark plugs ×4 (optional)',pn:'NGK CR9EKB',src:'g'}
+  ]},
+  {g:'Adjust — special tools',stage:'adjust',items:[
+    {id:'crankpin',n:'Crankshaft timing pin',pn:'020852Y',alt:'replicate: M6×1.0×~70 mm rod, 4.38 mm chamfered nipple — must be true and centered'},
+    {id:'campin',n:'Camshaft timing pin',pn:'020851Y',gnote:'5 mm diameter',alt:'heat and bend 90° for front bank in-frame; don\'t substitute an Allen key'},
+    {id:'cranklock',n:'Crank lock',pn:'020850Y or 020914Y',note:'gear lock or flywheel retainer',alt:'homemade primary gear holder, 16 ga steel + OEM tooth piece — avoids pulling the clutch'},
+    {id:'gearsup',n:'Cam gear support on head',pn:'020956Y',gnote:'newer version may need filing to fit'},
+    {id:'flyext',n:'Flywheel extractor',pn:'020913Y',note:'Kokusan flywheel only',src:'g'},
+    {id:'pin6',n:'6 mm pin, L or U shape',note:'locks exhaust cam clearance-recovery gear',src:'g'},
+    {id:'jammer',n:'MotionPro GearJammer (optional)',pn:'08-0427',src:'g'}
+  ]},
+  {g:'Adjust — tools',stage:'adjust',items:[
+    {id:'mic',n:'Micrometer, 0–25 mm',note:'shim thickness'},
+    {id:'breaker',n:'17 mm socket + breaker bar',note:'flywheel bolt',src:'g'},
+    {id:'torquehi',n:'Torque wrench to ~90 ft·lb',note:'flywheel bolt 89 ft·lb',src:'g'},
+    {id:'crowfoot',n:'13 mm extended crow\'s foot',note:'front cam gear bolts; recalc torque',src:'g'},
+    {id:'pry',n:'Soft pry bar / cat\'s paw',note:'alternator cover',src:'g'},
+    {id:'dowels',n:'5 mm dowels ~4" ×2–3',note:'guide the flywheel cover on',src:'g'},
+    {id:'pick',n:'Non-marring pick',note:'U-bolt O-rings',src:'g'}
+  ]},
+  {g:'Adjust — parts',stage:'adjust',items:[
+    {id:'camscrew',n:'Cam gear screws ×4, new',pn:'857008',note:'replace every reassembly'},
+    {id:'washers',n:'Cam tower crush washers ×8, new',pn:'857042',note:'spark plug side'},
+    {id:'camoring',n:'Cam cap O-rings, new',src:'g'},
+    {id:'altgasket',n:'Alternator cover gasket',pn:'AF1-GS898414',src:'g'},
+    {id:'clutchgasket',n:'Clutch cover gasket',pn:'857451',src:'g'},
+    {id:'orings',n:'Crank cap / blow-by O-rings',pn:'857078 / 857176',src:'g'},
+    {id:'shims',n:'Shims',note:'per kit selected'},
+    {id:'oil',n:'Oil + filter',pn:'HF138 or 857187',note:'covers off = oil out',src:'g'}
+  ]}
+];
+var TOOL_MODE_KEY='v4vl-toolmode';
+var toolMode='check';
+try{var tm=localStorage.getItem(TOOL_MODE_KEY);if(tm==='check'||tm==='adjust')toolMode=tm;}catch(e){}
+document.querySelectorAll('.mode-tab').forEach(function(b){
+  b.addEventListener('click',function(){
+    toolMode=this.dataset.mode;
+    try{localStorage.setItem(TOOL_MODE_KEY,toolMode);}catch(e){}
+    renderTools();
+  });
+});
+function toolsKey(id){return 'v4vl-tools:'+id;}
+var toolState={};
+function loadTools(){
+  toolState={};
+  try{var raw=localStorage.getItem(toolsKey(activeId));if(raw)toolState=JSON.parse(raw);}catch(e){}
+  renderTools();
+}
+function saveTools(){try{localStorage.setItem(toolsKey(activeId),JSON.stringify(toolState));}catch(e){}}
+function renderTools(){
+  var h='',total=0,done=0,tag='<span class="tsrc">guide</span>';
+  document.querySelectorAll('.mode-tab').forEach(function(b){
+    var on=b.dataset.mode===toolMode;
+    b.classList.toggle('active',on);
+    b.setAttribute('aria-selected',on?'true':'false');
+  });
+  TOOLS.forEach(function(grp){
+    if(toolMode==='check'&&grp.stage!=='check')return;
+    h+='<div class="tgroup">'+grp.g+'</div>';
+    grp.items.forEach(function(t){
+      total++;
+      var on=!!toolState[t.id];if(on)done++;
+      var meta=[];
+      if(t.pn)meta.push('<span class="tpn">'+t.pn+'</span>');
+      if(t.note)meta.push(t.note);
+      h+='<label class="titem'+(on?' done':'')+'">'
+        +'<input type="checkbox" data-tool="'+t.id+'"'+(on?' checked':'')+'>'
+        +'<span><span class="tname">'+t.n+(t.src==='g'?tag:'')+'</span>'
+        +(meta.length?'<span class="tmeta">'+meta.join(' &middot; ')+'</span>':'')
+        +(t.gnote?'<span class="talt">'+t.gnote+tag+'</span>':'')
+        +(t.alt?'<span class="talt">Alt: '+t.alt+tag+'</span>':'')
+        +'</span></label>';
+    });
+  });
+  var list=document.getElementById('tools-list');
+  list.innerHTML=h;
+  document.getElementById('tools-count').textContent=done+'/'+total;
+  list.querySelectorAll('input[data-tool]').forEach(function(cb){
+    cb.addEventListener('change',function(){
+      if(this.checked)toolState[this.dataset.tool]=true;
+      else delete toolState[this.dataset.tool];
+      saveTools();renderTools();
+    });
+  });
+}
+function openDrawer(){
+  document.getElementById('drawer').className='drawer on';
+  document.getElementById('btn-tools-close').focus();
+}
+function closeDrawer(){
+  document.getElementById('drawer').className='drawer';
+  document.getElementById('btn-tools').focus();
+}
+document.getElementById('btn-tools').addEventListener('click',openDrawer);
+document.getElementById('btn-tools-close').addEventListener('click',closeDrawer);
+document.getElementById('drawer').addEventListener('click',function(e){if(e.target===this)closeDrawer();});
+document.getElementById('btn-tools-reset').addEventListener('click',function(){
+  toolState={};saveTools();renderTools();
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&document.getElementById('drawer').className.indexOf('on')>-1)closeDrawer();
+});
+
+// ---- Export (live), copy, CSV ----
+function liveExportText(){
+  var bar='='.repeat(43),p=activeProfile();
   var L=[bar,'APRILIA V4 — VALVE CLEARANCE SERVICE RECORD',bar,'',
     'Date performed:   '+fmtDate(document.getElementById('m-date').value),
-    'Model / year:     '+mv('m-model'),
-    'VIN:              '+mv('m-vin').toUpperCase(),
+    'Bike:             '+(p.name||'—'),
+    'Model / year:     '+(p.model||'—'),
+    'VIN:              '+(p.vin?p.vin.toUpperCase():'—'),
     'Odometer:         '+mv('m-odo'),
     'Performed by:     '+mv('m-tech'),
     'Location:         '+mv('m-loc'),
     'Shim kit:         '+SHIM_KITS[currentKit].name+' ('+SHIM_KITS[currentKit].range+')','',
-    'Spec: Intake 0.10-0.15 mm  ·  Exhaust 0.20-0.25 mm  ·  Cam tower torque 12 Nm',
+    'Spec: Intake 0.10-0.15 mm (.0039-.0059 in)  ·  Exhaust 0.20-0.25 mm (.0079-.0098 in)  ·  Cam tower torque 12 Nm',
     '-'.repeat(43)];
   var curCyl=null;
   rowsData().forEach(function(row){
@@ -659,16 +1249,79 @@ document.getElementById('btn-export').addEventListener('click',function(){
     'aprilia-v4-valve-log, a local, offline tool; nothing in this record',
     'is uploaded anywhere.',
     bar);
-  o.textContent=L.join('\n');
+  return L.join('\n');
+}
+function csvEsc(v){
+  v=String(v==null?'':v);
+  return /[",\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v;
+}
+function liveCsvText(){
+  var rows=[['cylinder','position','gap_mm','old_shim_mm','new_shim_mm','status']];
+  rowsData().forEach(function(row){
+    rows.push([row.cyl,row.label,row.gap||'',row.shim||'',row.newshim||'',row.r?row.r.word:'']);
+  });
+  return rows.map(function(r){return r.map(csvEsc).join(',');}).join('\n');
+}
+function showOut(text){
+  var o=document.getElementById('out');
+  o.textContent=text;
   o.style.display='block';
+  document.getElementById('out-acts').hidden=false;
+  o.scrollIntoView({behavior:'smooth',block:'start'});
+}
+document.getElementById('btn-export').addEventListener('click',function(){showOut(liveExportText());});
+document.getElementById('btn-csv').addEventListener('click',function(){
+  document.getElementById('out').textContent=liveCsvText();
 });
+document.getElementById('btn-out-close').addEventListener('click',function(){
+  var o=document.getElementById('out');
+  o.style.display='none';
+  o.textContent='';
+  document.getElementById('out-acts').hidden=true;
+});
+document.getElementById('btn-copy').addEventListener('click',function(){
+  var out=document.getElementById('out'),text=out.textContent;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){flashSaved('Copied');}).catch(function(){legacyCopy(text,out);});
+  }else{
+    legacyCopy(text,out);
+  }
+});
+function selectNode(el){
+  try{
+    var range=document.createRange();
+    range.selectNodeContents(el);
+    var sel=window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }catch(e){}
+}
+function legacyCopy(text,out){
+  var ta=document.createElement('textarea');
+  ta.value=text;ta.style.position='fixed';ta.style.top='0';ta.style.opacity='0';
+  document.body.appendChild(ta);
+  ta.focus();ta.select();
+  try{ta.setSelectionRange(0,text.length);}catch(e){}
+  var ok=false;
+  try{ok=document.execCommand('copy');}catch(e){}
+  document.body.removeChild(ta);
+  if(ok){
+    flashSaved('Copied');
+  }else{
+    // Scripted copy is blocked — select the visible text as a last resort
+    // so the user can still copy it themselves (Ctrl/Cmd+C, or long-press
+    // > Copy on mobile). This selection survives because nothing touches
+    // focus/selection after it runs.
+    selectNode(out);
+    flashSaved('Selected — press Ctrl/Cmd+C');
+  }
+}
 
 function pline(label,val,unit){
   return val
     ? label+' <b>'+val+'</b> '+unit
     : label+' <span class="pv-blank"></span> '+unit;
 }
-
 function buildPrintGrid(){
   ROWS.forEach(function(r){
     var h='';
@@ -696,12 +1349,13 @@ function buildPrintGrid(){
     document.getElementById('p-'+r.el).innerHTML=h;
   });
 }
-
 function fillPrintSheet(){
+  var p=activeProfile();
   document.getElementById('p-date').textContent=fmtDate(document.getElementById('m-date').value);
   document.getElementById('p-odo').textContent=mv('m-odo');
-  document.getElementById('p-model').textContent=mv('m-model');
-  document.getElementById('p-vin').textContent=mv('m-vin').toUpperCase();
+  document.getElementById('p-bike').textContent=p.name||'—';
+  document.getElementById('p-model').textContent=p.model||'—';
+  document.getElementById('p-vin').textContent=p.vin?p.vin.toUpperCase():'—';
   document.getElementById('p-tech').textContent=mv('m-tech');
   document.getElementById('p-loc').textContent=mv('m-loc');
   document.getElementById('p-kit').textContent=SHIM_KITS[currentKit].name+' ('+SHIM_KITS[currentKit].range+')';
@@ -721,7 +1375,7 @@ document.getElementById('btn-print').addEventListener('click',function(){
 document.getElementById('btn-reset').addEventListener('click',function(){
   if(!confirm('Clear all 16 readings?'))return;
   data={};
-  try{localStorage.removeItem(KEY);}catch(e){}
+  try{localStorage.removeItem(dataKey(activeId));}catch(e){}
   var vs=document.querySelectorAll('.v');
   for(var i=0;i<vs.length;i++)paint(vs[i].dataset.k);
   tally();
@@ -743,63 +1397,9 @@ document.getElementById('btn-theme').addEventListener('click',function(){
 });
 paintThemeBtn();
 
-function paintKitTabs(){
-  document.querySelectorAll('.kit-tab').forEach(function(b){
-    var on=b.dataset.kit===currentKit;
-    b.classList.toggle('active',on);
-    b.setAttribute('aria-selected',on?'true':'false');
-  });
-  document.getElementById('kit-range').textContent=SHIM_KITS[currentKit].range;
-}
-function setKit(kk){
-  if(!SHIM_KITS[kk])return;
-  currentKit=kk;
-  try{localStorage.setItem(KIT_KEY,kk);}catch(e){}
-  paintKitTabs();
-  var vs=document.querySelectorAll('.v');
-  for(var i=0;i<vs.length;i++)paint(vs[i].dataset.k);
-  if(cur)verdict();
-}
-document.querySelectorAll('.kit-tab').forEach(function(b){
-  b.addEventListener('click',function(){setKit(this.dataset.kit);});
-});
-(function(){
-  try{
-    var saved=localStorage.getItem(KIT_KEY);
-    if(saved&&SHIM_KITS[saved])currentKit=saved;
-  }catch(e){}
-})();
-paintKitTabs();
-
-var META_KEY='v4valvelog-meta';
-var META_FIELDS=['m-date','m-odo','m-vin','m-model','m-tech','m-loc','m-notes'];
-function saveMeta(){
-  try{
-    var m={};
-    META_FIELDS.forEach(function(id){m[id]=document.getElementById(id).value;});
-    localStorage.setItem(META_KEY,JSON.stringify(m));
-  }catch(e){}
-}
-function loadMeta(){
-  try{
-    var raw=localStorage.getItem(META_KEY);
-    if(!raw)return;
-    var m=JSON.parse(raw);
-    META_FIELDS.forEach(function(id){if(m[id])document.getElementById(id).value=m[id];});
-  }catch(e){}
-}
-loadMeta();
-if(!document.getElementById('m-date').value){
-  document.getElementById('m-date').value=new Date().toISOString().slice(0,10);
-  saveMeta();
-}
-META_FIELDS.forEach(function(id){
-  document.getElementById(id).addEventListener('input',saveMeta);
-});
-document.getElementById('m-vin').addEventListener('input',function(){
-  var n=this.value.length,hint=document.getElementById('m-vin-hint');
-  hint.textContent=(n>0&&n!==17)?'VINs are normally 17 characters — double-check.':'';
-});
-
-build();load();tally();
+// ---- Boot ----
+migrateLegacy();
+loadProfiles();
+build();
+setActive(activeId);
 </script>
